@@ -1,7 +1,7 @@
 {
   "id": "pjhgamma.absolutefriends.example",
   "name": "Absolute Friends: Example",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "target_game_version": "v1.11.8",
   "authors": "pjhgamma",
   "description": "Example Remix plugin and Absolute Friends addon in one mod.",

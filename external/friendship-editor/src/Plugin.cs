@@ -18,7 +18,7 @@ public class Plugin : AddonPlugin
 
     public const string Name = "Absolute Friends: Friendship Editor";
 
-    public const string Version = "0.1.0";
+    public const string Version = "0.2.0";
 
     public override string AddonDescription => "Sets rules for players' reputation and creatures' like and relationships toward friends.";
 

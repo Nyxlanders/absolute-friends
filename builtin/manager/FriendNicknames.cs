@@ -16,6 +16,8 @@ internal static class FriendNicknames
 
     internal static void Unregister() => FriendDisplayNames.UnregisterNameRule(NicknameOf);
 
+    internal static (string Key, IEnumerable<string> Entries) Export(RainWorldGame game) => (SaveKey, _states.For(game).Entries);
+
     private static string? NicknameOf(AbstractCreature abstractCreature) => _states.For(abstractCreature)?.Get(abstractCreature);
 
     private static string Normalize(string? value) => new([.. (value ?? string.Empty)
@@ -23,25 +25,7 @@ internal static class FriendNicknames
         .Where(character => !char.IsControl(character))
         .Take(MaxNicknameLength)]);
 
-    extension(AbstractCreature abstractCreature)
-    {
-        internal void SetNickname(string? value)
-        {
-            if (abstractCreature.IsPlayer || _states.For(abstractCreature) is not { } state)
-            {
-                return;
-            }
-
-            string nickname = Normalize(value);
-
-            if (FriendSaveData.Assign(state.Nicknames, abstractCreature.SaveDataKey, nickname.Length == 0 ? null : nickname))
-            {
-                state.Write();
-            }
-        }
-    }
-
-    private sealed class State
+    private class State
     {
         internal readonly Dictionary<string, string> Nicknames = new(StringComparer.Ordinal);
 
@@ -53,7 +37,7 @@ internal static class FriendNicknames
         {
             _save = save;
 
-            foreach (string entry in FriendSaveData.ReadEntries(save, SaveKey))
+            foreach (var entry in FriendSaveData.ReadEntries(save, SaveKey))
             {
                 int separator = entry.IndexOf('=');
 
@@ -78,6 +62,10 @@ internal static class FriendNicknames
             }
         }
 
+        internal IEnumerable<string> Entries => Nicknames
+            .OrderBy(pair => pair.Key, StringComparer.Ordinal)
+            .Select(pair => $"{pair.Key}={FriendSaveData.Encode(pair.Value)}");
+
         internal string? Get(AbstractCreature creature) => _cache.GetValue(creature, subject =>
         {
             Nicknames.TryGetValue(subject.SaveDataKey, out string nickname);
@@ -89,9 +77,25 @@ internal static class FriendNicknames
         {
             _cache = new();
 
-            FriendSaveData.WriteEntries(_save, SaveKey, Nicknames
-                .OrderBy(pair => pair.Key, StringComparer.Ordinal)
-                .Select(pair => $"{pair.Key}={FriendSaveData.Encode(pair.Value)}"));
+            FriendSaveData.WriteEntries(_save, SaveKey, Entries);
+        }
+    }
+
+    extension(AbstractCreature abstractCreature)
+    {
+        internal void SetNickname(string? value)
+        {
+            if (abstractCreature.IsPlayer || FriendSaveData.IsReadOnly || _states.For(abstractCreature) is not { } state)
+            {
+                return;
+            }
+
+            string nickname = Normalize(value);
+
+            if (FriendSaveData.Assign(state.Nicknames, abstractCreature.SaveDataKey, nickname.Length == 0 ? null : nickname))
+            {
+                state.Write();
+            }
         }
     }
 }

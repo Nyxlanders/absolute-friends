@@ -1,4 +1,6 @@
+using AbsoluteFriends.Diagnostics;
 using AbsoluteFriends.Hooks;
+using MonoMod.Cil;
 
 namespace AbsoluteFriends.Core;
 
@@ -17,6 +19,27 @@ internal class FriendRelationshipHooks : BaseHooks
             && type != CreatureTemplate.Relationship.Type.PlaysWith
             && type != CreatureTemplate.Relationship.Type.SocialDependent
             && type != CreatureTemplate.Relationship.Type.Pack;
+    }
+
+    [HookPatch(typeof(IL.AbstractCreatureAI), nameof(IL.AbstractCreatureAI.MigrationBehavior))]
+    [HookTest([20], ["ldarg.0; ldnull; stfld AbstractCreatureAI::followCreature"])]
+    private static void IL_AbstractCreatureAI_MigrationBehavior(ILContext il)
+    {
+        ILCursor c = new(il);
+
+        if (c.TryGotoNext(
+            i => i.MatchCallOrCallvirt<SocialMemory>(nameof(SocialMemory.DiscardRelationship))
+        ))
+        {
+            c.Remove();
+            c.EmitGuarded((SocialMemory socialMemory, EntityID subjectID) =>
+            {
+                if (!subjectID.IsKnownSlugcat)
+                {
+                    socialMemory.DiscardRelationship(subjectID);
+                }
+            }, (socialMemory, subjectID) => socialMemory.DiscardRelationship(subjectID));
+        }
     }
 
     [HookPatch(typeof(On.RelationshipTracker.DynamicRelationship), nameof(On.RelationshipTracker.DynamicRelationship.Update))]

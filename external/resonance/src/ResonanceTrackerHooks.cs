@@ -1,4 +1,5 @@
 using AbsoluteFriends.Hooks;
+using AbsoluteFriends.Utils;
 
 namespace AbsoluteFriends.Resonance;
 
@@ -14,6 +15,14 @@ internal class ResonanceTrackerHooks : BaseHooks
         orig(self, manager);
 
         ResonanceUtils.ResetTrackers();
+    }
+
+    [HookPatch(typeof(On.RainWorldGame), nameof(On.RainWorldGame.Update))]
+    private static void On_RainWorldGame_Update(On.RainWorldGame.orig_Update orig, RainWorldGame self)
+    {
+        orig(self);
+
+        ResonanceUtils.UpdatePendingWarps(self);
     }
 
     [HookPatch(typeof(On.Creature), nameof(On.Creature.Die))]
@@ -53,6 +62,9 @@ internal class ResonanceTrackerHooks : BaseHooks
             self.Vibrate(tracker.Progress);
         }
 
-        self.Stagger(tracker.Severity(self.room));
+        if (self.HasAuthority)
+        {
+            self.Stagger(tracker.Severity(self.room));
+        }
     }
 }

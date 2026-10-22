@@ -14,6 +14,10 @@ public static class Config
 
     private static readonly Dictionary<ConfigurableBase, List<Configurable<bool>[]>> _requirements = [];
 
+    private static readonly HashSet<ConfigurableBase> _disabledInMeadow = [];
+
+    private static readonly HashSet<ConfigurableBase> _unsyncedInMeadow = [];
+
     public static string JollyCoop(string text, string jollyCoopText) => ModManager.JollyCoop ? jollyCoopText : text;
 
     public static string Downpour(string text, string downpourText) => ModManager.MSC ? downpourText : text;
@@ -29,6 +33,30 @@ public static class Config
         HookBaselines = oi.config.Bind("HookBaselines", false, new ConfigurableInfo("Records hook baselines as HookTest attributes in the diagnostics report.", tags: ["Record Hook Baselines"])).Require(Debug);
     }
 
+    private static bool IsOffInMeadow(ConfigurableBase? configurableBase, HashSet<ConfigurableBase> path)
+    {
+        if (configurableBase == null)
+        {
+            return false;
+        }
+
+        if (configurableBase.IsDisabledInMeadow)
+        {
+            return true;
+        }
+
+        if (!path.Add(configurableBase))
+        {
+            return false;
+        }
+
+        bool off = configurableBase.Requirements.Any(group => group.All(master => IsOffInMeadow(master, path)));
+
+        path.Remove(configurableBase);
+
+        return off;
+    }
+
     extension(ConfigurableBase? configurableBase)
     {
         public string? Label => configurableBase?.info?.Tags is { Length: > 0 } tags ? tags[0] as string : null;
@@ -37,12 +65,18 @@ public static class Config
 
         public IEnumerable<Configurable<bool>[]> Requirements => configurableBase != null && _requirements.TryGetValue(configurableBase, out List<Configurable<bool>[]> groups) ? groups : [];
 
+        public bool IsDisabledInMeadow => configurableBase != null && _disabledInMeadow.Contains(configurableBase);
+
+        public bool IsUnsyncedInMeadow => configurableBase != null && _unsyncedInMeadow.Contains(configurableBase);
+
+        internal bool IsOffInMeadow => IsOffInMeadow(configurableBase, []);
+
         private bool IsAllowed => configurableBase.Requirements.All(group => group.Any(master => master.IsActive));
     }
 
     extension(Configurable<bool>? option)
     {
-        public bool IsActive => option is { Value: true } && option.IsAllowed;
+        public bool IsActive => option is { Value: true } && option.IsAllowed && !(MeadowOptions.IsInLobby && option.IsDisabledInMeadow);
 
         internal bool IsSelected => option.IsChecked && option.Requirements.All(group => group.Any(master => master.IsSelected));
 
@@ -91,6 +125,20 @@ public static class Config
             {
                 groups.Add(group);
             }
+
+            return target;
+        }
+
+        public T DisableInMeadow()
+        {
+            _disabledInMeadow.Add(target);
+
+            return target;
+        }
+
+        public T UnsyncInMeadow()
+        {
+            _unsyncedInMeadow.Add(target);
 
             return target;
         }

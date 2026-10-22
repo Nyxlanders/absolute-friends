@@ -35,7 +35,7 @@ internal class ResonanceHooks : BaseHooks
     }
 
     [HookPatch(typeof(IL.RegionGate), nameof(IL.RegionGate.Update))]
-    [HookTest([63], ["ldarg.0; ldsfld Mode::ClosingAirLock"])]
+    [HookTest([72], ["ldarg.0; ldsfld Mode::ClosingAirLock"])]
     private static void IL_RegionGate_Update(ILContext il)
     {
         ILCursor c = new(il);
@@ -59,7 +59,7 @@ internal class ResonanceHooks : BaseHooks
     }
 
     [HookPatch(typeof(On.RoomSpecificScript.SB_A14KarmaIncrease), nameof(On.RoomSpecificScript.SB_A14KarmaIncrease.Update))]
-    private static void On_RoomSpecificScript_SB_A14KarmaIncrease_Update(On.RoomSpecificScript.SB_A14KarmaIncrease.orig_Update orig, RoomSpecificScript.SB_A14KarmaIncrease self, bool eu)
+    private static void On_SB_A14KarmaIncrease_Update(On.RoomSpecificScript.SB_A14KarmaIncrease.orig_Update orig, RoomSpecificScript.SB_A14KarmaIncrease self, bool eu)
     {
         bool addKarma = self.addKarma;
 
@@ -100,6 +100,21 @@ internal class WatcherResonanceHooks : WatcherHooks
                 }
             });
         }
+    }
+
+    [HookPatch(typeof(On.Watcher.WarpPoint), nameof(On.Watcher.WarpPoint.WarpPrecast))]
+    private static void On_WarpPoint_WarpPrecast(On.Watcher.WarpPoint.orig_WarpPrecast orig, WarpPoint self)
+    {
+        if (
+            MeadowOptions.IsInLobby
+            && self.room?.game?.session is StoryGameSession session
+            && session.spinningTopWarpsLeadingToRippleScreen.Contains(self.MyIdentifyingString())
+        )
+        {
+            self.ResonateHere((warpPoint, creature) => creature.room == warpPoint.room);
+        }
+
+        orig(self);
     }
 }
 

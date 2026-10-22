@@ -1,3 +1,4 @@
+using AbsoluteFriends.Options;
 using RWCustom;
 using Watcher;
 
@@ -41,7 +42,7 @@ public static class GateZoneUtils
 
         public bool IsInRegionGate(Creature creature)
         {
-            if (regionGate.room != creature.room || !regionGate.MeetRequirement)
+            if (regionGate.room != creature.room || (!MeadowOptions.IsInLobby && !regionGate.MeetRequirement))
             {
                 return false;
             }

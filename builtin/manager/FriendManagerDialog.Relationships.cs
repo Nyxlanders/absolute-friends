@@ -1,4 +1,5 @@
 using AbsoluteFriends.Core;
+using AbsoluteFriends.Options;
 using AbsoluteFriends.Utils;
 using Menu;
 using Menu.Remix.MixedUI;
@@ -6,9 +7,9 @@ using UnityEngine;
 
 namespace AbsoluteFriends.Manager;
 
-internal sealed partial class FriendManagerDialog
+internal partial class FriendManagerDialog
 {
-    private sealed partial class DetailsTab
+    private partial class DetailsTab
     {
         private static string RelationshipLabel(FriendshipType type) => type switch
         {
@@ -28,7 +29,7 @@ internal sealed partial class FriendManagerDialog
             _ => MenuColorEffect.rgbMediumGrey,
         };
 
-        private sealed class RelationshipRow
+        private class RelationshipRow
         {
             internal const float Height = 30f;
 
@@ -88,7 +89,7 @@ internal sealed partial class FriendManagerDialog
 
             private readonly float _percentX;
 
-            internal RelationshipRow(FriendTab tab, AutoScrollBox scrollBox)
+            internal RelationshipRow(FriendTab tab, ScrollArea scrollBox)
             {
                 _percentX = tab.Size.x - 25f - PercentWidth;
                 _icon = new(Vector2.zero, "Futile_White")
@@ -133,7 +134,7 @@ internal sealed partial class FriendManagerDialog
                 };
                 _percent = new(Vector2.zero, new Vector2(PercentWidth, LabelHeight), string.Empty, FLabelAlignment.Right);
 
-                foreach (UIelement element in Elements)
+                foreach (var element in Elements)
                 {
                     tab.Add(scrollBox, element);
                 }

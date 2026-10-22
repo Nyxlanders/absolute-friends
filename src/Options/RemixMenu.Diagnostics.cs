@@ -3,7 +3,7 @@ using Menu.Remix.MixedUI;
 
 namespace AbsoluteFriends.Options;
 
-internal sealed partial class RemixMenu
+internal partial class RemixMenu
 {
     private void BuildDiagnostics(OpTab tab)
     {

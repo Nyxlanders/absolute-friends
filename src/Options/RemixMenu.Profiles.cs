@@ -4,8 +4,28 @@ using AbsoluteFriends.Utils;
 
 namespace AbsoluteFriends.Options;
 
-internal sealed partial class RemixMenu
+internal partial class RemixMenu
 {
+    internal void KeepSelectedProfile()
+    {
+        if (_profiles.Find(profile => profile.Id == Config.ProfileSelection.Value) is not { } profile)
+        {
+            return;
+        }
+
+        try
+        {
+            if (ProfileManager.Keep(profile))
+            {
+                RefreshProfileViews();
+            }
+        }
+        catch (Exception exception)
+        {
+            ProfileFailure("Could not update profile.", exception);
+        }
+    }
+
     private void SelectProfile(int slot) => SelectProfile(slot, reapplyCurrent: true);
 
     private void SelectProfile(string id) => SelectProfile(_profiles.FindIndex(profile => profile.Id == id), reapplyCurrent: false);
@@ -51,51 +71,6 @@ internal sealed partial class RemixMenu
 
         ProfileManager.Apply(profile);
         ShowProfileResult(profile, "Profile loaded.");
-    }
-
-    internal void KeepSelectedProfile()
-    {
-        if (_profiles.Find(profile => profile.Id == Config.ProfileSelection.Value) is not { } profile)
-        {
-            return;
-        }
-
-        try
-        {
-            if (ProfileManager.Keep(profile))
-            {
-                RefreshProfileViews();
-            }
-        }
-        catch (Exception exception)
-        {
-            ProfileFailure("Could not update profile.", exception);
-        }
-    }
-
-    private void CopyProfile(int index)
-    {
-        if (ProfileAt(index) is not { } profile)
-        {
-            return;
-        }
-
-        try
-        {
-            Profile copy = ProfileManager.Copy(profile, $"{profile.Name} Copy");
-
-            _profiles.Insert(0, copy);
-            _profileIndex = 0;
-
-            ApplyProfile();
-            RefreshProfileViews();
-            _profileFilter?.ScrollToTop();
-            SetProfileStatus("Profile copied.");
-        }
-        catch (Exception exception)
-        {
-            ProfileFailure("Could not copy profile.", exception);
-        }
     }
 
     private void RenameProfile(int index, string name)

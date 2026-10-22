@@ -6,21 +6,29 @@ using UnityEngine;
 
 namespace AbsoluteFriends.Manager;
 
-internal sealed partial class FriendManagerDialog
+internal partial class FriendManagerDialog
 {
-    private sealed class FriendRow(AbstractCreature creature, RowButton button, RowWrapper focus, OpLabel name, OpImage? icon, UIelementWrapper[] wrappers)
+    internal void RemoveElement(UIelementWrapper wrapper)
     {
-        internal AbstractCreature Creature { get; } = creature;
+        UIelement element = wrapper.thisElement;
 
-        internal RowButton Button { get; } = button;
+        if (element.InScrollBox)
+        {
+            OpScrollBox.RemoveItemsFromScrollBox([element]);
+        }
 
-        internal RowWrapper Focus { get; } = focus;
+        _wrapper._tab.RemoveItems([element]);
+        _wrapper.wrappers.Remove(element);
+        _wrapper.RemoveSubObject(wrapper);
+        wrapper.page.selectables.Remove(wrapper);
+        wrapper.glow?.sprite.RemoveFromContainer();
 
-        internal OpLabel Name { get; } = name;
+        if (selectedObject == wrapper)
+        {
+            selectedObject = null;
+        }
 
-        internal OpImage? Icon { get; } = icon;
-
-        internal UIelementWrapper[] Wrappers { get; } = wrappers;
+        element.Unload();
     }
 
     private static List<AbstractCreature> CollectCreatures() => [.. FriendUtils.TrackingCandidates
@@ -128,9 +136,9 @@ internal sealed partial class FriendManagerDialog
 
     private void ClearList()
     {
-        foreach (FriendRow row in _rows)
+        foreach (var row in _rows)
         {
-            foreach (UIelementWrapper wrapper in row.Wrappers)
+            foreach (var wrapper in row.Wrappers)
             {
                 RemoveElement(wrapper);
             }
@@ -151,29 +159,6 @@ internal sealed partial class FriendManagerDialog
             _scrollWrapper = null;
             _scrollBox = null;
         }
-    }
-
-    internal void RemoveElement(UIelementWrapper wrapper)
-    {
-        UIelement element = wrapper.thisElement;
-
-        if (element.InScrollBox)
-        {
-            OpScrollBox.RemoveItemsFromScrollBox([element]);
-        }
-
-        _wrapper._tab.RemoveItems([element]);
-        _wrapper.wrappers.Remove(element);
-        _wrapper.RemoveSubObject(wrapper);
-        wrapper.page.selectables.Remove(wrapper);
-        wrapper.glow?.sprite.RemoveFromContainer();
-
-        if (selectedObject == wrapper)
-        {
-            selectedObject = null;
-        }
-
-        element.Unload();
     }
 
     private float RowY(int index) => _contentHeight - 10f - (index + 1) * RowSpacing;
@@ -285,12 +270,27 @@ internal sealed partial class FriendManagerDialog
 
     private void RefreshRows()
     {
-        foreach (FriendRow row in _rows)
+        foreach (var row in _rows)
         {
             row.Name.text = row.Creature.FriendName;
             row.Name.color = row.Creature.ShortcutColor;
 
             row.Icon?.color = row.Creature.Icon.Color;
         }
+    }
+
+    private class FriendRow(AbstractCreature creature, RowButton button, RowWrapper focus, OpLabel name, OpImage? icon, UIelementWrapper[] wrappers)
+    {
+        internal AbstractCreature Creature { get; } = creature;
+
+        internal RowButton Button { get; } = button;
+
+        internal RowWrapper Focus { get; } = focus;
+
+        internal OpLabel Name { get; } = name;
+
+        internal OpImage? Icon { get; } = icon;
+
+        internal UIelementWrapper[] Wrappers { get; } = wrappers;
     }
 }

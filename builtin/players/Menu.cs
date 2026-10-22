@@ -17,6 +17,7 @@ internal static class Menu
         menu.AddCheckBox(Config.ArtificerParry, enabled: ModManager.MSC);
         menu.AddCheckBox(Config.SaintTongue, enabled: ModManager.MSC);
         menu.AddCheckBox(Config.SaintAttunement, enabled: ModManager.MSC);
+        menu.SetColumns(2);
         menu.AddCheckBox(Config.WatcherCamouflage, enabled: ModManager.Watcher);
         menu.AddCheckBox(Config.RippleSpace, enabled: ModManager.Watcher);
     }

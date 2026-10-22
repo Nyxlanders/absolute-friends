@@ -1,4 +1,3 @@
-using System.Reflection;
 using AbsoluteFriends.Options;
 using AbsoluteFriends.Utils;
 using Menu.Remix.MixedUI;
@@ -9,8 +8,6 @@ namespace AbsoluteFriends.Core;
 internal static partial class Menu
 {
     private const ushort VisibleRuleItems = 3;
-
-    private static readonly FieldInfo? _listTopField = typeof(OpComboBox).GetField("_listTop", BindingFlags.Instance | BindingFlags.NonPublic);
 
     private static MenuBuilder? _rulesMenu;
 
@@ -103,7 +100,7 @@ internal static partial class Menu
             string[] previous = [.. configuredRules.GetItemList().Select(item => item.name)];
             ListItem[] current = ConfiguredRuleItems();
 
-            _listTopField?.SetValue(configuredRules, 0);
+            configuredRules._listTop = 0;
             configuredRules.AddItems(sort: false, [new ListItem("__refresh", " ")]);
             configuredRules.RemoveItems(selectNext: false, previous);
             configuredRules.AddItems(sort: false, current);

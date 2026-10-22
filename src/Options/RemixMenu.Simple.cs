@@ -2,7 +2,7 @@ using AbsoluteFriends.Addons;
 
 namespace AbsoluteFriends.Options;
 
-internal sealed partial class RemixMenu
+internal partial class RemixMenu
 {
     private static SwitchState StateOf(Configurable<bool>[] options)
     {
@@ -52,9 +52,10 @@ internal sealed partial class RemixMenu
                 () => enabled.IsChecked ? SwitchState.On : SwitchState.Off,
                 () => IsUsable(enabled),
                 () => enabled.Check(!enabled.IsChecked),
-                span: 3f
+                span: 3f,
+                meadowNote: MeadowNoteOf([enabled])
             );
-            AddLabel(addon.AddonDescription, alignment: FLabelAlignment.Left, enabled: addon.AddonDescription.Length > 0);
+            AddDescription(addon.AddonDescription);
         }
         else
         {
@@ -70,7 +71,7 @@ internal sealed partial class RemixMenu
                 continue;
             }
 
-            AddSwitch(group.Label, group.Description, () => StateOf(options), () => IsAvailable(addon, options), () => Toggle(options));
+            AddSwitch(group.Label, group.Description, () => StateOf(options), () => IsAvailable(addon, options), () => Toggle(options), meadowNote: MeadowNoteOf(options));
             switches++;
         }
 

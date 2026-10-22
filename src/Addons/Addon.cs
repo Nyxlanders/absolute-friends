@@ -5,7 +5,7 @@ using AbsoluteFriends.Options;
 
 namespace AbsoluteFriends.Addons;
 
-public sealed class Addon
+public class Addon
 {
     private static ModManager.Mod? _host;
 
@@ -88,13 +88,15 @@ public sealed class Addon
 
     internal bool HasUngroupedOptions => _options.Count > _groups.Sum(group => group.Options.Count);
 
-    internal IEnumerable<string> Keywords => [Name, .. AddonDependencyIds.Select(AddonRegistry.RawNameOf), .. _keywords];
+    internal IEnumerable<string> Keywords => [Name, .. AddonDependencyIds.Select(AddonRegistry.RawNameOf), .. _keywords, .. HasDisabledInMeadow ? (string[])["Meadow"] : []];
 
     internal bool HasMenu { get; }
 
     internal Action<MenuBuilder> BuildMenu { get; }
 
     internal IReadOnlyDictionary<string, ConfigurableBase> ProfileOptions => _options;
+
+    private bool HasDisabledInMeadow => MeadowOptions.IsMeadowInstalled && _options.Values.Any(option => option.IsOffInMeadow);
 
     private AddonPlugin? Plugin { get; }
 

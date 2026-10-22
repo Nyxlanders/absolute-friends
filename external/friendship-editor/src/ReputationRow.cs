@@ -1,4 +1,5 @@
 using AbsoluteFriends.Manager;
+using AbsoluteFriends.Options;
 using AbsoluteFriends.Utils;
 using Menu;
 using Menu.Remix.MixedUI;
@@ -6,7 +7,7 @@ using UnityEngine;
 
 namespace AbsoluteFriends.FriendshipEditor;
 
-internal sealed class ReputationRow
+internal class ReputationRow
 {
     internal const float Height = EditorUi.ListRowHeight;
 
@@ -30,7 +31,7 @@ internal sealed class ReputationRow
 
     private readonly OpLabel _percent;
 
-    internal ReputationRow(FriendTab tab, ScrollList list, string key, string name)
+    internal ReputationRow(FriendTab tab, ScrollArea list, string key, string name)
     {
         Key = key;
         _name = new(Vector2.zero, new Vector2(EditorUi.ListNameWidth, EditorUi.RowHeight), EditorUi.Trim(name, EditorUi.ListNameWidth), FLabelAlignment.Left);
@@ -41,7 +42,7 @@ internal sealed class ReputationRow
         _center.scale = new Vector2(1f, BarHeight + EditorUi.ListMarkOverhang * 2f);
         _percent = new(Vector2.zero, new Vector2(PercentWidth, EditorUi.RowHeight), string.Empty, FLabelAlignment.Right);
 
-        foreach (UIelement element in Elements)
+        foreach (var element in Elements)
         {
             tab.Add(list, element);
         }

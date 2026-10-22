@@ -1,5 +1,6 @@
 using AbsoluteFriends.Core;
 using AbsoluteFriends.Options;
+using AbsoluteFriends.Utils;
 
 namespace AbsoluteFriends.Resonance;
 
@@ -68,7 +69,7 @@ internal static partial class ResonanceUtils
             Dictionary<AbstractCreature, int> grasps = resonanceAnchor.Grasps;
             HashSet<AbstractCreature> held = [];
 
-            foreach (var abstractPlayer in room.game?.AlivePlayers ?? [])
+            foreach (var abstractPlayer in room.game?.AllPlayers.Where(abstractPlayer => abstractPlayer.state is { dead: false }) ?? [])
             {
                 if (abstractPlayer?.realizedCreature is not Player player || player.room != room || !player.IsResonating)
                 {

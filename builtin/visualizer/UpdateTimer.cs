@@ -1,6 +1,6 @@
 namespace AbsoluteFriends.Visualizer;
 
-internal sealed class UpdateTimer
+internal class UpdateTimer
 {
     private int _remaining;
 

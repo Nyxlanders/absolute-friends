@@ -1,3 +1,4 @@
+using AbsoluteFriends.Manager;
 using AbsoluteFriends.Utils;
 using Menu;
 using Menu.Remix.MixedUI;
@@ -5,7 +6,7 @@ using UnityEngine;
 
 namespace AbsoluteFriends.FriendshipEditor;
 
-internal sealed class StatRow
+internal class StatRow
 {
     internal const float LabelWidth = 90f;
 
@@ -74,7 +75,8 @@ internal sealed class StatRow
         Rule? inherited = !isLimit && _mode.value == EditorUi.Inherit && resolved is { Enforces: true } broader ? broader : null;
 
         _resolved = resolved;
-        _value.greyedOut = !isLimit;
+        _mode.greyedOut = FriendManager.IsReadOnly;
+        _value.greyedOut = !isLimit || FriendManager.IsReadOnly;
 
         if (inherited is { } rule)
         {

@@ -130,6 +130,22 @@ public abstract partial class MenuBuilder : OptionInterface
             : config.Bind(key, defaultValue, info);
     }
 
+    internal void WithButtonRequirement(Configurable<bool>? requirement, Action build)
+    {
+        Configurable<bool>? previous = _buttonRequirement;
+
+        _buttonRequirement = requirement;
+
+        try
+        {
+            build();
+        }
+        finally
+        {
+            _buttonRequirement = previous;
+        }
+    }
+
     protected void BeginTab(OpTab? tab)
     {
         EndTab();
@@ -268,22 +284,6 @@ public abstract partial class MenuBuilder : OptionInterface
     private protected void Watch(Action update)
     {
         _externals.Add(update);
-    }
-
-    internal void WithButtonRequirement(Configurable<bool>? requirement, Action build)
-    {
-        Configurable<bool>? previous = _buttonRequirement;
-
-        _buttonRequirement = requirement;
-
-        try
-        {
-            build();
-        }
-        finally
-        {
-            _buttonRequirement = previous;
-        }
     }
 
     private static void Snap(UIelement element)

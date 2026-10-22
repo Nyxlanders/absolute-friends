@@ -116,6 +116,8 @@ internal class FriendHudOverlay : HudOverlay
         }
     }
 
+    private static bool IsTaggedByMeadow(AbstractCreature creature) => creature.IsPlayer && !creature.HasAuthority && MeadowOptions.IsInLobby && MeadowTags.IsShown;
+
     private static bool IsHidden(RoomCamera camera)
     {
         RoomCamera.CameraCutsceneType type = camera.cutsceneType;
@@ -137,9 +139,9 @@ internal class FriendHudOverlay : HudOverlay
     {
         _sources.Clear();
 
-        foreach (var creature in FriendUtils.TrackedFriends)
+        foreach (var creature in FriendUtils.TrackedFriendsIncludingPlayers)
         {
-            if (creature.IsPlayer || creature.slatedForDeletion || creature.world != room.world || !_sources.Add(creature))
+            if ((creature.IsPlayer && creature.HasAuthority) || creature.slatedForDeletion || creature.world != room.world || !_sources.Add(creature))
             {
                 continue;
             }
@@ -176,7 +178,7 @@ internal class FriendHudOverlay : HudOverlay
             bool isSource = isActive && _sources.Contains(creature);
             bool positioned = _positions.TryGet(creature, camera, camera.pos, 1f, out OverlayPosition place);
 
-            marker.Update(isShown && isSource && positioned ? place : null);
+            marker.Update(isShown && isSource && positioned && !IsTaggedByMeadow(creature) ? place : null);
 
             if (!isSource && !marker.IsVisible)
             {

@@ -2,12 +2,13 @@ using AbsoluteFriends.Core;
 using AbsoluteFriends.Diagnostics;
 using AbsoluteFriends.Hooks;
 using AbsoluteFriends.Options;
+using AbsoluteFriends.Utils;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 
 namespace AbsoluteFriendsExample;
 
-internal sealed class FriendshipHooks : DownpourHooks
+internal class FriendshipHooks : DownpourHooks
 {
     // Hook groups use any active option by default. Override IsOptionEnabled when customized condition is needed.
     protected override Configurable<bool>[] Options => [AddonConfig.Friendship];
@@ -36,29 +37,45 @@ internal sealed class FriendshipHooks : DownpourHooks
 
         c.Emit(OpCodes.Ldarg_0);
         // EmitGuarded reports an exception from the delegate and disables its hook group instead of disrupting later updates.
-        c.EmitGuarded((DaddyAI self) =>
-        {
-            if (!self.creature.IsHunterDaddy)
-            {
-                return;
-            }
+        c.EmitGuarded((DaddyAI self) => UpdateTracking(self.creature));
+    }
 
-            // Core registers only creatures with a vanilla FriendTracker (lizards, squidcadas, slugpups) on its own.
-            // Hunter Long Legs has none, so this addon registers it while it is a player's friend and removes it otherwise.
-            // Track() only registers: IsTracked also requires friendship eligibility and every tracking rule to agree.
-            // Core clears registrations when the world changes and drops creatures deleted while alive, so call Track() repeatedly, as this update does.
-            // Registered creatures are TrackingCandidates, so the Manager lists them and can untrack or nickname them.
-            // The Manager hides Forget for creatures without a vanilla FriendTracker, because this hook would register them again at once.
-            if (AddonConfig.Friendship.IsActive && self.creature.IsFriendOfPlayer)
-            {
-                self.creature.Track();
-            }
-            else
-            {
-                // Untrack() also removes a creature that Core or another addon registered.
-                self.creature.Untrack();
-            }
-        });
+    // In Rain Meadow, a creature's AI runs only in the game of the player who controls it, so DaddyAI.Update never runs here for another player's Hunter Long Legs.
+    // HasAuthority is false for those copies, so this update tracks them instead. HasAuthority is always true outside Rain Meadow.
+    [HookPatch(typeof(On.DaddyLongLegs), nameof(On.DaddyLongLegs.Update))]
+    private static void On_DaddyLongLegs_Update(On.DaddyLongLegs.orig_Update orig, DaddyLongLegs self, bool eu)
+    {
+        orig(self, eu);
+
+        if (!self.HasAuthority)
+        {
+            UpdateTracking(self.abstractCreature);
+        }
+    }
+
+    private static void UpdateTracking(AbstractCreature abstractCreature)
+    {
+        if (!abstractCreature.IsHunterDaddy)
+        {
+            return;
+        }
+
+        // Core registers only creatures with a vanilla FriendTracker (lizards, squidcadas, slugpups) on its own.
+        // Hunter Long Legs has none, so this addon registers it while it is a player's friend and removes it otherwise.
+        // Track() only registers: IsTracked also requires friendship eligibility and every tracking rule to agree.
+        // Core clears registrations when the world changes and drops creatures deleted while alive, so call Track() repeatedly, as these updates do.
+        // Registered creatures are TrackingCandidates, so the Manager lists them and can untrack or nickname them.
+        // IsFriendOfPlayer checks every player in PlayerUtils.AllPlayers, which in Rain Meadow also holds other players' slugcats; use AllPlayers rather than game.Players for the same reason.
+        // The Manager hides Forget for creatures without a vanilla FriendTracker, because these hooks would register them again at once.
+        if (AddonConfig.Friendship.IsActive && abstractCreature.IsFriendOfPlayer)
+        {
+            abstractCreature.Track();
+        }
+        else
+        {
+            // Untrack() also removes a creature that Core or another addon registered.
+            abstractCreature.Untrack();
+        }
     }
 
     [HookPatch(typeof(On.ArtificialIntelligence), nameof(On.ArtificialIntelligence.CurrentPlayerAggression))]

@@ -26,7 +26,7 @@ internal class CollisionHooks : BaseHooks
     }
 
     [HookPatch(typeof(IL.Room), nameof(IL.Room.Update))]
-    [HookTest([1137], ["ldc.i4.0; stloc.s; ldc.i4.0"])]
+    [HookTest([1157], ["ldc.i4.0; stloc.s; ldc.i4.0"])]
     private static void IL_Room_Update(ILContext il)
     {
         ILCursor c = new(il);

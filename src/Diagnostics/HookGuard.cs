@@ -94,7 +94,7 @@ public static class HookGuard
         binding.MarkFailed(exception);
     }
 
-    private sealed class EmittedGuard(HookBinding? binding, Delegate body, Delegate? fallback) : IEmittedGuard
+    private class EmittedGuard(HookBinding? binding, Delegate body, Delegate? fallback) : IEmittedGuard
     {
         public Delegate Body => body;
 

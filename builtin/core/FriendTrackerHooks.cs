@@ -5,6 +5,10 @@ namespace AbsoluteFriends.Core;
 
 internal class FriendTrackerHooks : BaseHooks
 {
+    private const int RemoteInterval = 10;
+
+    private static int _remoteTimer;
+
     protected override Configurable<bool>[] Options => [Config.FriendSlugcat, Config.FriendCreature, Config.FriendNeutralCreature, Config.FriendSharing, Config.FriendChaining];
 
     protected override bool IsOptionEnabled => base.IsOptionEnabled || CreatureRules.HasConfiguredRules;
@@ -25,6 +29,13 @@ internal class FriendTrackerHooks : BaseHooks
         orig(self);
 
         FriendUtils.PruneTrackedFriends();
+
+        if (AuthorityUtils.HasRemoteRules && ++_remoteTimer >= RemoteInterval)
+        {
+            _remoteTimer = 0;
+
+            UpdateRemoteTracking(self);
+        }
     }
 
     [HookPatch(typeof(On.FriendTracker), nameof(On.FriendTracker.Update))]
@@ -39,6 +50,25 @@ internal class FriendTrackerHooks : BaseHooks
 
         self.AdoptSlugcatFriend();
 
+        UpdateTracking(self, abstractCreature);
+    }
+
+    private static void UpdateRemoteTracking(RainWorldGame game)
+    {
+        foreach (var room in game.world?.activeRooms ?? [])
+        {
+            foreach (var abstractCreature in room.abstractRoom.creatures)
+            {
+                if (abstractCreature is { IsPlayer: false, HasAuthority: false } && abstractCreature.abstractAI?.RealAI?.friendTracker is { } tracker)
+                {
+                    UpdateTracking(tracker, abstractCreature);
+                }
+            }
+        }
+    }
+
+    private static void UpdateTracking(FriendTracker self, AbstractCreature abstractCreature)
+    {
         if (abstractCreature.IsSlugpup)
         {
             AbstractCreature? abstractPlayer = self.friend?.abstractCreature is { IsPlayer: true, slatedForDeletion: false, state.dead: false } followedPlayer

@@ -3,14 +3,11 @@ using AbsoluteFriends.Options;
 
 namespace AbsoluteFriends.FriendshipEditor;
 
-internal sealed class RelationshipView(FriendTab tab, RainWorldGame game, float y) : CreatureView(tab, game, y, Stat.Relationship)
+internal class RelationshipView(FriendTab tab, RainWorldGame game, float y) : CreatureView(tab, game, y, Stat.Relationship)
 {
     internal override string Title => "Relationship";
 
     internal static bool IsAvailableFor(AbstractCreature friend) => Config.RelationshipEditor.IsActive && IsFriendTarget(friend);
-
-    private static Tracker.CreatureRepresentation? Representation(AbstractCreature creature, AbstractCreature target) =>
-        creature.abstractAI?.RealAI?.tracker?.RepresentationForCreature(target, false);
 
     internal override bool IsVisibleFor(AbstractCreature friend) => IsAvailableFor(friend);
 
@@ -22,4 +19,7 @@ internal sealed class RelationshipView(FriendTab tab, RainWorldGame game, float 
 
         row.ShowRelationship(creature, tracked ?? RuleEffects.RelationshipFor(creature, target) ?? creature.creatureTemplate.CreatureRelationship(target.creatureTemplate), tracked != null, y);
     }
+
+    private static Tracker.CreatureRepresentation? Representation(AbstractCreature creature, AbstractCreature target) =>
+        creature.abstractAI?.RealAI?.tracker?.RepresentationForCreature(target, false);
 }

@@ -25,7 +25,7 @@ internal static class GuardContexts
     }
 }
 
-internal sealed class GuardContract
+internal class GuardContract
 {
     public readonly Type ContextType;
 

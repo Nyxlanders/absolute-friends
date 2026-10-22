@@ -22,7 +22,7 @@ public static class Translation
     {
         public string FillPlaceholders(params object[] values)
         {
-            foreach (object value in values)
+            foreach (var value in values)
             {
                 int index = template.IndexOf(Placeholder, StringComparison.Ordinal);
 

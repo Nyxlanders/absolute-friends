@@ -24,32 +24,6 @@ internal static class ProfileManager
         return (profile, result);
     }
 
-    internal static Profile Copy(Profile source, string name)
-    {
-        string now = Timestamp();
-        Profile profile = new()
-        {
-            Id = Guid.NewGuid().ToString("N"),
-            Name = NormalizeName(name),
-            CreatedAt = now,
-            ModifiedAt = now,
-            Addons = source.Addons.ToDictionary(
-                pair => pair.Key,
-                pair => new ProfileAddon
-                {
-                    Name = pair.Value.Name,
-                    Version = pair.Value.Version,
-                    Enabled = pair.Value.Enabled,
-                    Options = new(pair.Value.Options),
-                }
-            ),
-        };
-
-        ProfileStore.Save(profile);
-
-        return profile;
-    }
-
     internal static bool Keep(Profile profile)
     {
         Capture(profile, SavedValueOf, out bool changed);
@@ -159,6 +133,11 @@ internal static class ProfileManager
         return new(enabledAddons, profile.Addons.Count, enabledOptions, options, unavailableAddons, unavailableOptions);
     }
 
+    internal static string ValueOf(ConfigurableBase? configurable)
+    {
+        return configurable?.BoundUIconfig?.value ?? SavedValueOf(configurable);
+    }
+
     private static ProfileResult Capture(Profile profile, Func<ConfigurableBase?, string> valueOf, out bool changed)
     {
         int addons = 0;
@@ -166,7 +145,7 @@ internal static class ProfileManager
 
         changed = false;
 
-        foreach (Addon addon in AddonRegistry.Applied)
+        foreach (var addon in AddonRegistry.Applied)
         {
             if (!profile.Addons.TryGetValue(addon.Id, out ProfileAddon saved))
             {
@@ -268,7 +247,7 @@ internal static class ProfileManager
 
     private static string ProfileValue(Profile profile, ConfigurableBase configurable)
     {
-        foreach (Addon addon in AddonRegistry.Applied)
+        foreach (var addon in AddonRegistry.Applied)
         {
             if (!profile.Addons.TryGetValue(addon.Id, out ProfileAddon saved))
             {
@@ -290,11 +269,6 @@ internal static class ProfileManager
         }
 
         return "false";
-    }
-
-    private static string ValueOf(ConfigurableBase? configurable)
-    {
-        return configurable?.BoundUIconfig?.value ?? SavedValueOf(configurable);
     }
 
     private static string SavedValueOf(ConfigurableBase? configurable) => configurable?.BoxedValue switch

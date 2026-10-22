@@ -22,6 +22,6 @@ internal class DownpourScavengerBombHooks : DownpourHooks
     protected override Configurable<bool>[] Options => [Config.ScavengerBomb];
 
     [HookPatch(typeof(IL.JokeRifle), nameof(IL.JokeRifle.Use))]
-    [HookTest([937], ["callvirt PhysicalObject::get_firstChunk"])]
+    [HookTest([957], ["callvirt PhysicalObject::get_firstChunk"])]
     private static void IL_JokeRifle_Use(ILContext il) => il.JokeRifleUse<ScavengerBomb>();
 }

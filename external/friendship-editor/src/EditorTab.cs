@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace AbsoluteFriends.FriendshipEditor;
 
-internal sealed class EditorTab
+internal class EditorTab
 {
     private const string TabId = Plugin.GUID + ".editor";
 
@@ -93,7 +93,7 @@ internal sealed class EditorTab
 
     private void Show(EditorView? view)
     {
-        foreach (EditorView other in _views.Where(other => other != view))
+        foreach (var other in _views.Where(other => other != view))
         {
             other.SetShown(false);
         }

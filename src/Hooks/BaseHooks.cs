@@ -38,6 +38,8 @@ public abstract class BaseHooks
 
     internal IEnumerable<HookBinding> Bindings => _bindings;
 
+    internal bool IsApplied => _bindings.Any(binding => binding.IsApplied);
+
     protected abstract Configurable<bool>[] Options { get; }
 
     protected virtual string? Subject => null;

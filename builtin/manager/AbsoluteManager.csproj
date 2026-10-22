@@ -10,4 +10,8 @@
     <ProjectReference Include="..\core\AbsoluteCore.csproj" Private="false" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="MonoMod.RuntimeDetour" HintPath="$(LibraryPath)MonoMod.RuntimeDetour.dll" Private="false" />
+  </ItemGroup>
+
 </Project>

@@ -93,7 +93,8 @@ internal static class Config
         JellyFish = addon.Bind("JellyFish", true, new ConfigurableInfo("Will not be caught or stunned by the tentacles of a jellyfish held by a friend, and will not be stunned by a jellyfish thrown by friends.", tags: ["Jellyfish"]));
         Pomegranate = addon.Bind("Pomegranate", true, new ConfigurableInfo("Will not take damage from a pomegranate dropped by friends.", tags: ["Pomegranate"]));
         Mushroom = addon.Bind("Mushroom", true, new ConfigurableInfo("Will share the effects of mushrooms with slugcat friends.", tags: ["Mushroom"]))
-            .Require(Core.Config.FriendSlugcat);
+            .Require(Core.Config.FriendSlugcat)
+            .DisableInMeadow();
         Snail = addon.Bind("Snail", true, new ConfigurableInfo("Will not be stunned by the next pop from a snail thrown, hit, or killed by a friend.", tags: ["Snail"]));
         TubeWorm = addon.Bind("TubeWorm", true, new ConfigurableInfo("Will not be caught by a grappling worm's tongue used by friends.", tags: ["Grappling Worm"]));
         Frog = addon.Bind("Frog", true, new ConfigurableInfo("Will not be attached by a frog thrown by friends.", tags: ["Frog"]));
@@ -101,8 +102,7 @@ internal static class Config
         addon.Group(
             "Weapons",
             "Will not be hurt by items friends throw or use.",
-            Rock, Spear, ExplosiveSpear, ElectricSpear, HellSpear, PoisonSpear, LilyPuck, ScavengerBomb, SingularityBomb, FireEgg, SporePlant, Boomerang,
-            FlareBomb, PuffBall, WaterNut, FirecrackerPlant, GraffitiBomb, DangleFruit, JellyFish, Pomegranate
+            Rock, Spear, ExplosiveSpear, ElectricSpear, HellSpear, PoisonSpear, LilyPuck, ScavengerBomb, SingularityBomb, FireEgg, SporePlant, Boomerang, FlareBomb, PuffBall, WaterNut, FirecrackerPlant, GraffitiBomb, DangleFruit, JellyFish, Pomegranate
         );
         addon.Group("Mushroom", "Will share the effects of mushrooms with slugcat friends.", Mushroom);
         addon.Group("Small Creatures", "Will not be caught or stunned by creatures friends throw or use.", Snail, TubeWorm, Frog);

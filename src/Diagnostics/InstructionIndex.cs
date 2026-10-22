@@ -17,7 +17,7 @@ internal static class InstructionIndex
         return indices;
     }
 
-    private sealed class ReferenceComparer : IEqualityComparer<Instruction>
+    private class ReferenceComparer : IEqualityComparer<Instruction>
     {
         public static readonly ReferenceComparer Instance = new();
 

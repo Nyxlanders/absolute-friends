@@ -2,7 +2,7 @@ using AbsoluteFriends.Diagnostics;
 
 namespace AbsoluteFriends.Addons;
 
-public sealed class AddonLogger
+public class AddonLogger
 {
     private readonly string _tag;
 

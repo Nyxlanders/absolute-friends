@@ -7,12 +7,11 @@ using UnityEngine;
 
 namespace AbsoluteFriendsExample;
 
-internal sealed class RemixMenu : MenuBuilder
+internal class RemixMenu : MenuBuilder
 {
     // An independent Remix menu may inherit MenuBuilder for its layout helpers or OptionInterface to use the standard API directly.
     internal static readonly RemixMenu Instance = new();
 
-    // ListItem keeps persisted values stable while display names can be translated.
     private static readonly ListItem[] styles = [
         new("Ripple", Translate("Ripple Purple")),
         new("Gold", Translate("Karamic Gold")),
@@ -38,8 +37,6 @@ internal sealed class RemixMenu : MenuBuilder
         // A long tab becomes scrollable automatically. Wrap each tab's controls between BeginTab and EndTab.
         BeginTab(overviewTab);
         BuildOverviewTab();
-
-        // EndTab();
 
         // BeginTab() automatically calls EndTab() so you could call EndTab() once after last tab is completed.
         BeginTab(uiGalleryTab);
@@ -97,6 +94,8 @@ internal sealed class RemixMenu : MenuBuilder
         SetColumns(4);
         AddNote("Plugin: <PLACEHOLDER>", Plugin.Name, alignment: FLabelAlignment.Left, span: 3f);
         AddNote("Version <PLACEHOLDER>", Plugin.Version);
+        // MeadowOptions tells whether Rain Meadow is installed and whether this game is in Rain Meadow, without referencing Rain Meadow.
+        AddNote("Rain Meadow: <PLACEHOLDER>", Translate(MeadowOptions.IsMeadowInstalled ? "Installed" : "Not installed"), alignment: FLabelAlignment.Left, span: 4f);
         // AddRow can insert deliberate spacing after a complete row.
         AddRow(0.5f);
 

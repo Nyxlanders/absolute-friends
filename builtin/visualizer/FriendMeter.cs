@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace AbsoluteFriends.Visualizer;
 
-internal sealed partial class FriendMeter(FContainer container)
+internal partial class FriendMeter(FContainer container)
 {
     private const float IconDistance = 30f;
 

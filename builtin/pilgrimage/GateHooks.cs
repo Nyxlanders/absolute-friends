@@ -1,6 +1,7 @@
 using AbsoluteFriends.Core;
 using AbsoluteFriends.Diagnostics;
 using AbsoluteFriends.Hooks;
+using AbsoluteFriends.Options;
 using AbsoluteFriends.Utils;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
@@ -24,7 +25,7 @@ internal class GateHooks : BaseHooks
     }
 
     [HookPatch(typeof(IL.Player), nameof(IL.Player.Update))]
-    [HookTest([4448, 4462], ["ldc.i4.s; ble; ldarg.0", "ldarg.0; ldfld Player::touchedNoInputCounter"])]
+    [HookTest([4485, 4499], ["ldc.i4.s; ble; ldarg.0", "ldarg.0; ldfld Player::touchedNoInputCounter"])]
     private static void IL_Player_Update(ILContext il)
     {
         ILCursor c = new(il);
@@ -67,7 +68,11 @@ internal class GateHooks : BaseHooks
                         c.Emit(OpCodes.Ldarg_0);
                         c.EmitGuarded(
                             (Player player) => player.room?.shelterDoor is ShelterDoor shelterDoor
-                                && shelterDoor.CanActivate(shelterDoor.room?.game?.AlivePlayers, GateZoneUtils.IsInShelterDoor),
+                                && shelterDoor.CanActivate(
+                                    ShelterDoorUtils.SleepersIn(shelterDoor, shelterDoor.room?.game?.AlivePlayers),
+                                    GateZoneUtils.IsInShelterDoor,
+                                    MeadowOptions.IsInLobby || Config.AnyShelter.IsActive ? GateUtils.IsAwaitedInShelter : null
+                                ),
                             _ => true
                         );
                         c.Emit(OpCodes.Brfalse, l);
@@ -81,6 +86,11 @@ internal class GateHooks : BaseHooks
     private static bool On_RegionGate_PlayersStandingStill(On.RegionGate.orig_PlayersStandingStill orig, RegionGate self)
     {
         self.startCounter = 60;
+
+        if (MeadowOptions.IsInLobby)
+        {
+            return orig(self) && self.CanActivate((self.room?.game).AllPlayers, GateZoneUtils.IsInRegionGate);
+        }
 
         return self.CanActivate(ModManager.CoopAvailable ? self.room?.game?.PlayersToProgressOrWin : self.room?.game?.Players, GateZoneUtils.IsInRegionGate);
     }
@@ -113,7 +123,7 @@ internal class GateHooks : BaseHooks
     }
 
     [HookPatch(typeof(IL.RegionGate), nameof(IL.RegionGate.Update))]
-    [HookTest([40], ["brfalse; ldarg.0; callvirt RegionGate::get_EnergyEnoughToOpen"])]
+    [HookTest([44], ["brfalse; ldarg.0; callvirt RegionGate::get_EnergyEnoughToOpen"])]
     private static void IL_RegionGate_Update(ILContext il)
     {
         ILCursor c = new(il);
@@ -161,9 +171,26 @@ internal class WatcherGateHooks : WatcherHooks
             c.Emit(OpCodes.Ldarg_0);
             c.EmitGuarded((WarpPoint warpPoint) =>
             {
-                if (warpPoint.guaranteeTrigger)
+                if (warpPoint.guaranteeTrigger || (warpPoint.overrideData ?? warpPoint.Data).dynamicWarpPoint)
                 {
+                    if (MeadowOptions.IsInLobby && warpPoint.room.game.Players.Any(abstractPlayer => abstractPlayer.realizedCreature is Player { dead: false } player && warpPoint.IsInWarpPoint(player)))
+                    {
+                        warpPoint.triggerTime = warpPoint.triggerActivationTime;
+                    }
+
                     return true;
+                }
+
+                if (MeadowOptions.IsInLobby)
+                {
+                    if (warpPoint.CanActivate((warpPoint.room?.game).AllPlayers, GateZoneUtils.IsInWarpPoint))
+                    {
+                        return true;
+                    }
+
+                    warpPoint.triggerTime = 0f;
+
+                    return false;
                 }
 
                 warpPoint.triggerTime = 0f;

@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 
 namespace AbsoluteFriends.Visualizer;
 
-internal sealed class FriendMarker
+internal class FriendMarker
 {
     private const string ArrowSymbol = "Multiplayer_Arrow";
 

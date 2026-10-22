@@ -1,3 +1,4 @@
+using AbsoluteFriends.Utils;
 using RWCustom;
 using UnityEngine;
 
@@ -42,7 +43,7 @@ internal class ResonanceMelt : UpdatableAndDeletable
                 if (camera?.room == room)
                 {
                     camera.SetUpFullScreenEffect("Bloom");
-                    camera.fullScreenEffect.shader = room.game?.rainWorld?.Shaders["LevelMelt2"];
+                    camera.fullScreenEffect.shader = RainWorldUtils.Shader("LevelMelt2");
                     camera.lightBloomAlphaEffect = RoomSettings.RoomEffect.Type.VoidMelt;
                     camera.fullScreenEffect.alpha = 1f;
                 }
@@ -63,6 +64,14 @@ internal class ResonanceMelt : UpdatableAndDeletable
 
         _counter = Mathf.Max(0f, _counter - 1f / 60f);
         _roomEffect?.amount = Mathf.Lerp(_amount, 1f, Custom.SCurve(_counter, 0.6f));
+
+        foreach (var camera in room?.game?.cameras ?? [])
+        {
+            if (camera != null && camera.room == room && camera.levelGraphic is { } levelGraphic && levelGraphic.shader == RainWorldUtils.Shader("LevelMelt"))
+            {
+                levelGraphic.alpha = _roomEffect?.amount ?? 0f;
+            }
+        }
 
         if (_counter == 0f)
         {
@@ -100,7 +109,30 @@ internal class ResonanceMelt : UpdatableAndDeletable
             if (camera != null && camera.room == room)
             {
                 camera.ApplyPalette();
+                RestoreLevelShader(camera);
             }
+        }
+    }
+
+    private static void RestoreLevelShader(RoomCamera camera)
+    {
+        if (camera.room is not { } room || camera.levelGraphic is not { } levelGraphic || levelGraphic.shader != RainWorldUtils.Shader("LevelMelt"))
+        {
+            return;
+        }
+
+        if (room.roomSettings.GetEffectAmount(RoomSettings.RoomEffect.Type.VoidMelt) > 0f)
+        {
+            levelGraphic.alpha = room.roomSettings.GetEffectAmount(RoomSettings.RoomEffect.Type.VoidMelt);
+        }
+        else if (room.roomSettings.GetEffectAmount(RoomSettings.RoomEffect.Type.HeatWave) > 0f)
+        {
+            levelGraphic.shader = RainWorldUtils.Shader("LevelHeat") ?? levelGraphic.shader;
+            levelGraphic.alpha = room.roomSettings.GetEffectAmount(RoomSettings.RoomEffect.Type.HeatWave) / 2f;
+        }
+        else
+        {
+            levelGraphic.shader = RainWorldUtils.Shader("LevelColor") ?? levelGraphic.shader;
         }
     }
 }

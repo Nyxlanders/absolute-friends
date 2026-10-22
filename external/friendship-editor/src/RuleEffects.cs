@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using AbsoluteFriends.Manager;
 using AbsoluteFriends.Options;
 using AbsoluteFriends.Utils;
 
@@ -11,20 +12,11 @@ internal static class RuleEffects
 
     private const string FriendPrefix = "#";
 
+    private const string UnmappedFriendKey = FriendPrefix + "?";
+
     private static readonly ConditionalWeakTable<SocialMemory.Relationship, Owner> _owners = new();
 
     private static readonly ConditionalWeakTable<AbstractCreature, string> _friendKeys = new();
-
-    private static string RegionKey(RainWorldGame game, int region)
-    {
-        string[] names = game.rainWorld.progression.regionNames;
-
-        return region >= 0 && region < names.Length ? names[region] : GlobalRegion;
-    }
-
-    private static string PlayerKey(int playerNumber) => playerNumber.ToString(CultureInfo.InvariantCulture);
-
-    private static string FriendKey(AbstractCreature friend) => _friendKeys.GetValue(friend, creature => FriendPrefix + creature.ID);
 
     internal static RuleKey ReputationKey(RainWorldGame game, string subject, string region, int playerNumber) => new(
         subject,
@@ -67,14 +59,14 @@ internal static class RuleEffects
     {
         Dictionary<EntityID, AbstractCreature> creatures = [];
 
-        foreach (AbstractRoom room in game.world?.abstractRooms ?? [])
+        foreach (var room in game.world?.abstractRooms ?? [])
         {
-            foreach (AbstractCreature creature in room.creatures)
+            foreach (var creature in room.creatures)
             {
                 creatures[creature.ID] = creature;
             }
 
-            foreach (AbstractWorldEntity entity in room.entitiesInDens)
+            foreach (var entity in room.entitiesInDens)
             {
                 if (entity is AbstractCreature creature)
                 {
@@ -83,7 +75,7 @@ internal static class RuleEffects
             }
         }
 
-        foreach (AbstractCreature player in game.Players)
+        foreach (var player in game.AllPlayers)
         {
             creatures[player.ID] = player;
         }
@@ -111,7 +103,7 @@ internal static class RuleEffects
         List<AbstractCreature> creatures = [.. LoadedCreatures(game).Values];
         List<AbstractCreature> targets = [.. Targets(game, rules, creatures)];
 
-        foreach (AbstractCreature creature in creatures)
+        foreach (var creature in creatures)
         {
             ApplyLikes(creature, targets);
         }
@@ -157,12 +149,12 @@ internal static class RuleEffects
 
     internal static void ApplyLikes(AbstractCreature creature, IEnumerable<AbstractCreature> targets)
     {
-        if (creature.IsPlayer || creature.state is not { } state)
+        if (creature.IsPlayer || !creature.HasAuthority || creature.state is not { } state)
         {
             return;
         }
 
-        foreach (AbstractCreature target in targets)
+        foreach (var target in targets)
         {
             if (target == creature)
             {
@@ -185,9 +177,6 @@ internal static class RuleEffects
         }
     }
 
-    private static IEnumerable<AbstractCreature> Targets(RainWorldGame game, Rules rules, IEnumerable<AbstractCreature> creatures) =>
-        game.Players.Concat(creatures.Where(creature => !creature.IsPlayer && rules.HasTarget(FriendKey(creature))));
-
     internal static void ApplyRelationship(SocialMemory.Relationship relationship)
     {
         if (Config.LikeEditor.IsActive && _owners.TryGetValue(relationship, out Owner owner))
@@ -195,6 +184,22 @@ internal static class RuleEffects
             new LikeRules(owner.Creature, owner.Target).Apply(relationship);
         }
     }
+
+    private static string RegionKey(RainWorldGame game, int region)
+    {
+        string[] names = game.rainWorld.progression.regionNames;
+
+        return region >= 0 && region < names.Length ? names[region] : GlobalRegion;
+    }
+
+    private static string PlayerKey(int playerNumber) => playerNumber.ToString(CultureInfo.InvariantCulture);
+
+    private static string FriendKey(AbstractCreature friend) => FriendManager.IsReadOnly ? HostKey(friend) : _friendKeys.GetValue(friend, HostKey);
+
+    private static string HostKey(AbstractCreature friend) => FriendManager.HostIdOf(friend) is { } id ? FriendPrefix + id : UnmappedFriendKey;
+
+    private static IEnumerable<AbstractCreature> Targets(RainWorldGame game, Rules rules, IEnumerable<AbstractCreature> creatures) =>
+        game.AllPlayers.Concat(creatures.Where(creature => !creature.IsPlayer && rules.HasTarget(FriendKey(creature))));
 
     private readonly struct LikeRules(AbstractCreature creature, AbstractCreature? target)
     {
@@ -214,7 +219,7 @@ internal static class RuleEffects
         }
     }
 
-    private sealed class Owner(AbstractCreature creature, AbstractCreature? target)
+    private class Owner(AbstractCreature creature, AbstractCreature? target)
     {
         internal AbstractCreature Creature { get; } = creature;
 

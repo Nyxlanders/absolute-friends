@@ -10,6 +10,7 @@ namespace AbsoluteFriends.Pilgrimage;
 
 [BepInPlugin(GUID, Name, AbsoluteFriends.Plugin.Version)]
 [BepInDependency(Core.Plugin.GUID)]
+[BepInDependency(MeadowOptions.MeadowGUID, BepInDependency.DependencyFlags.SoftDependency)]
 public class Plugin : AddonPlugin
 {
     public const string GUID = "pjhgamma.absolutefriends.pilgrimage";
@@ -25,4 +26,26 @@ public class Plugin : AddonPlugin
     protected override void Bind(Addon addon) => Pilgrimage.Config.Bind(addon);
 
     protected override void BuildMenu(MenuBuilder menu) => Menu.Build(menu);
+
+    protected override void Enable()
+    {
+        if (MeadowOptions.IsMeadowInstalled)
+        {
+            MeadowGates.Register();
+            MeadowSpectating.Register();
+            MeadowShelters.Register();
+            MeadowWarps.Register();
+        }
+    }
+
+    protected override void Disable()
+    {
+        if (MeadowOptions.IsMeadowInstalled)
+        {
+            MeadowWarps.Unregister();
+            MeadowShelters.Unregister();
+            MeadowSpectating.Unregister();
+            MeadowGates.Unregister();
+        }
+    }
 }

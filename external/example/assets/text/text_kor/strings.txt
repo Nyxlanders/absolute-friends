@@ -20,6 +20,9 @@ This tab uses MenuBuilder for the plugin's own settings.|이 탭은 플러그인
 Addon options: Absolute Friends > Addons|애드온 옵션: 절대적 친구 > 애드온
 Plugin: <PLACEHOLDER>|플러그인: <PLACEHOLDER>
 Version <PLACEHOLDER>|버전 <PLACEHOLDER>
+Rain Meadow: <PLACEHOLDER>|레인 메도우: <PLACEHOLDER>
+Installed|설치됨
+Not installed|설치되지 않음
 
 Sound Test|소리 테스트
 Enables the test button sound.|테스트 버튼 소리를 켭니다.
@@ -109,5 +112,7 @@ Notes|메모
 Marks this friend as a favorite.|이 친구를 즐겨찾기로 표시합니다.
 Favorite|즐겨찾기
 Wave|흔들기
-Spins this friend's icon.|이 친구의 아이콘을 돌립니다.
+Spins this friend's icon. In Rain Meadow, the host's wave also spins it for everyone else.|이 친구의 아이콘을 돌립니다. 레인 메도우에서는 호스트가 흔들면 다른 모두에게도 돌아갑니다.
 Holding with <PLACEHOLDER> tentacles|촉수 <PLACEHOLDER>개로 붙잡는 중
+Let Go|놓기
+Makes this Hunter Long Legs drop everything it holds.|이 헌터 롱 레그가 붙잡은 것을 모두 놓게 합니다.

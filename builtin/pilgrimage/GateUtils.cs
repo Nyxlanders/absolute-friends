@@ -29,6 +29,15 @@ internal static class GateUtils
         }
     }
 
+    internal static bool IsAwaitedInShelter(AbstractCreature abstractCreature) => IsLocalPlayersFriend(abstractCreature) && !IsInAnyShelter(abstractCreature);
+
+    private static bool IsLocalPlayersFriend(AbstractCreature abstractCreature) =>
+        abstractCreature.world?.game?.AlivePlayers.Any(abstractPlayer => abstractCreature.IsTrackedFor(abstractPlayer)) == true;
+
+    private static bool IsInAnyShelter(AbstractCreature abstractCreature) => abstractCreature.realizedCreature is { room.shelterDoor: { } shelterDoor } creature
+        ? shelterDoor.IsInShelterDoor(creature)
+        : abstractCreature.Room?.shelter == true;
+
     private static bool IsIdleForGate(Player player, float seconds)
     {
         return player.dead
@@ -38,7 +47,7 @@ internal static class GateUtils
                 && player.touchedNoInputCounter - idleState.ResetCounter > seconds * RainWorldUtils.Second);
     }
 
-    private sealed class GateIdleState
+    private class GateIdleState
     {
         public bool WasUnconscious;
 
@@ -47,11 +56,12 @@ internal static class GateUtils
 
     extension<T>(T gate) where T : UpdatableAndDeletable
     {
-        public bool CanActivate(List<AbstractCreature>? abstractPlayers, Func<T, Creature, bool> isInGate)
+        public bool CanActivate(IEnumerable<AbstractCreature>? abstractPlayers, Func<T, Creature, bool> isInGate, Func<AbstractCreature, bool>? isAwaited = null)
         {
-            bool isFriendOutside = FriendUtils.TrackedFriends.Any(abstractCreature => abstractCreature.realizedCreature is { } creature
-                ? !creature.dead && !isInGate(gate, creature)
-                : abstractCreature.state?.dead != true);
+            bool isFriendOutside = FriendUtils.TrackedFriends.Any(abstractCreature => (isAwaited == null || isAwaited(abstractCreature))
+                && (abstractCreature.realizedCreature is { } creature
+                    ? !creature.dead && !isInGate(gate, creature)
+                    : abstractCreature.state?.dead != true));
 
             if (isFriendOutside && !Config.GateForce.IsActive)
             {
@@ -62,7 +72,7 @@ internal static class GateUtils
 
             foreach (var abstractPlayer in abstractPlayers ?? [])
             {
-                if (abstractPlayer.realizedCreature is not Player player || !player.IsPlayer)
+                if (abstractPlayer.realizedCreature is not Player player || !player.IsPlayer || (player.dead && Config.Perseverance.IsActive))
                 {
                     continue;
                 }

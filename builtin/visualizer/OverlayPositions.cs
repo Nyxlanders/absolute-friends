@@ -16,7 +16,7 @@ internal readonly struct OverlayPosition(Vector2 screen, Vector2 actual, bool is
     public bool IsDistant => IsOtherRoom || IsClamped;
 }
 
-internal sealed class OverlayPositions
+internal class OverlayPositions
 {
     private ConditionalWeakTable<AbstractPhysicalObject, StrongBox<Vector2>> _lastPlaces = new();
 

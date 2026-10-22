@@ -10,6 +10,7 @@ namespace AbsoluteFriends.Visualizer;
 
 [BepInPlugin(GUID, Name, AbsoluteFriends.Plugin.Version)]
 [BepInDependency(Core.Plugin.GUID)]
+[BepInDependency(MeadowOptions.MeadowGUID, BepInDependency.DependencyFlags.SoftDependency)]
 public class Plugin : AddonPlugin
 {
     public const string GUID = "pjhgamma.absolutefriends.visualizer";

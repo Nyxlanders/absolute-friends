@@ -11,7 +11,7 @@ internal static partial class ResonanceUtils
 
     extension(AbstractCreature abstractCreature)
     {
-        private void Reflect(int duration, int cost)
+        private void Shake(int duration)
         {
             if (duration < 1)
             {
@@ -22,7 +22,17 @@ internal static partial class ResonanceUtils
 
             tracker.Duration = duration;
             tracker.Reflection = duration;
-            tracker.Aftershock += (int)(cost * AftershockRatio);
+        }
+
+        private void Reflect(int duration, int cost)
+        {
+            if (duration < 1)
+            {
+                return;
+            }
+
+            abstractCreature.Shake(duration);
+            abstractCreature.Tracker.Aftershock += (int)(cost * AftershockRatio);
 
             if (abstractCreature.realizedCreature is not { } creature)
             {

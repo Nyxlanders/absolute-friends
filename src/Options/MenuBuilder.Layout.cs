@@ -188,14 +188,6 @@ public abstract partial class MenuBuilder
         return paragraph;
     }
 
-    private void FinishRow()
-    {
-        if (_currentColumn > 0)
-        {
-            AddRow(1.5f);
-        }
-    }
-
     private protected void BeginBox()
     {
         if (_currentTab == null || _box != null)
@@ -247,6 +239,28 @@ public abstract partial class MenuBuilder
         return box;
     }
 
+    private protected OpLabel? AddDescription(string text)
+    {
+        if (_currentTab == null || text.Length == 0)
+        {
+            return null;
+        }
+
+        FinishRow();
+
+        _pos.y += Spacing * 0.5f;
+
+        return AddLabel(text, null, false, FLabelAlignment.Left, true);
+    }
+
+    private void FinishRow()
+    {
+        if (_currentColumn > 0)
+        {
+            AddRow(1.5f);
+        }
+    }
+
     private OpLabel? AddLabel(string text, string? value, bool bigText, FLabelAlignment alignment, bool enabled)
     {
         if (_currentTab == null || !enabled)
@@ -269,8 +283,17 @@ public abstract partial class MenuBuilder
         };
 
         label.Change();
+
+        float extraHeight = LabelTest.LineHeight(bigText) * (label.GetLineCount() - 1);
+
+        if (extraHeight > 0f)
+        {
+            label.pos -= new Vector2(0f, extraHeight);
+            label.size += new Vector2(0f, extraHeight);
+        }
+
         AddElements(label);
-        AddRow();
+        AddRow(1f + extraHeight / Spacing);
 
         return label;
     }

@@ -29,7 +29,7 @@ public abstract partial class MenuBuilder
 
         OpRadioButtonGroup radioButtonGroup = new(configurable)
         {
-            description = Translate(configurable.Description ?? "")
+            description = DescriptionOf(configurable)
         };
 
         Register(configurable, radioButtonGroup);
@@ -207,7 +207,7 @@ public abstract partial class MenuBuilder
 
         BeginBlock(span);
 
-        string description = Translate(configurable.Description ?? "");
+        string description = DescriptionOf(configurable);
         float width = BlockWidth(span);
         OpLabel? label = text == null ? null : AddBlockLabel(text, description, width);
         float top = _pos.y + (label == null ? 0f : Spacing * 0.5f);
@@ -337,19 +337,19 @@ public abstract partial class MenuBuilder
             return null;
         }
 
-        string description = Translate(configurableBase.Description ?? "");
+        string description = DescriptionOf(configurableBase);
         T box = create();
 
         box.description = description;
 
         OpLabel? label = null;
 
-        if ((text ??= configurableBase.Label) != null)
+        if ((text ?? configurableBase.Label) is { } labelText)
         {
             label = new(
                 new Vector2(_pos.x + Spacing + Gap, _pos.y - Spacing * 0.5f),
                 new(ElementWidth * span - Spacing - Gap, Spacing),
-                Translate(text),
+                LabelOf(configurableBase, labelText),
                 FLabelAlignment.Left
             )
             {
@@ -388,8 +388,8 @@ public abstract partial class MenuBuilder
             return false;
         }
 
-        string description = Translate(configurable.Description ?? "");
-        OpLabel? label = AddControlLabel(description, text, span, out float labelWidth);
+        string description = DescriptionOf(configurable);
+        OpLabel? label = AddControlLabel(description, text, span, out float labelWidth, IsMarkedDisabledInMeadow(configurable));
 
         layout = new(
             description,
@@ -410,7 +410,7 @@ public abstract partial class MenuBuilder
         return control;
     }
 
-    private OpLabel? AddControlLabel(string description, string? text, float span, out float labelWidth)
+    private OpLabel? AddControlLabel(string description, string? text, float span, out float labelWidth, bool meadowMarked = false)
     {
         labelWidth = 0f;
 
@@ -424,7 +424,7 @@ public abstract partial class MenuBuilder
         OpLabel label = new(
             new Vector2(_pos.x + Gap, _pos.y - Spacing * 0.5f),
             new(labelWidth - Gap * 2f, Spacing),
-            Translate(text),
+            WithMeadowMark(Translate(text), meadowMarked),
             FLabelAlignment.Left
         )
         {

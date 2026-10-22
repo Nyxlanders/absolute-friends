@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace AbsoluteFriends.Manager;
 
-internal sealed class HoldButton : OpHoldButton
+internal class HoldButton : OpHoldButton
 {
     private const float FillTime = 80f;
 

@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 namespace AbsoluteFriends.Profiles;
 
 [DataContract]
-internal sealed class Profile
+internal class Profile
 {
     [DataMember(Order = 0)]
     public int FormatVersion { get; set; } = 1;
@@ -25,7 +25,7 @@ internal sealed class Profile
 }
 
 [DataContract]
-internal sealed class ProfileAddon
+internal class ProfileAddon
 {
     [DataMember(Order = 0)]
     public string Name { get; set; } = "";

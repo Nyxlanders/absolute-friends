@@ -11,7 +11,7 @@ internal class SnailHooks : BaseHooks
     protected override Configurable<bool>[] Options => [Config.Snail];
 
     [HookPatch(typeof(IL.Snail), nameof(IL.Snail.Click))]
-    [HookTest([367, 370, 379], ["ldarg.0; ldfld PhysicalObject::abstractPhysicalObject", "beq.s; ldloc.s; ldfld PhysicalObject::abstractPhysicalObject", "ldloc.s; callvirt PhysicalObject::get_bodyChunks"])]
+    [HookTest([373, 376, 385], ["ldarg.0; ldfld PhysicalObject::abstractPhysicalObject", "beq.s; ldloc.s; ldfld PhysicalObject::abstractPhysicalObject", "ldloc.s; callvirt PhysicalObject::get_bodyChunks"])]
     private static void IL_Snail_Click(ILContext il) => il.FriendBranch();
 
     [HookPatch(typeof(On.Snail), nameof(On.Snail.Click))]

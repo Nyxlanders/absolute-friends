@@ -4,7 +4,7 @@ namespace AbsoluteFriends.Options;
 
 public abstract partial class MenuBuilder
 {
-    private sealed class OptionEntry(UIfocusable focusable, OpLabel? label, string description)
+    private class OptionEntry(UIfocusable focusable, OpLabel? label, string description)
     {
         private string _mark = "";
 

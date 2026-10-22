@@ -12,7 +12,7 @@ namespace AbsoluteFriends.FriendshipEditor;
 [BepInPlugin(GUID, Name, Version)]
 [BepInDependency(Core.Plugin.GUID)]
 [BepInDependency(Manager.Plugin.GUID)]
-public sealed class Plugin : AddonPlugin
+public class Plugin : AddonPlugin
 {
     public const string GUID = "pjhgamma.absolutefriends.friendshipeditor";
 
@@ -32,11 +32,13 @@ public sealed class Plugin : AddonPlugin
 
     protected override void Enable()
     {
+        RuleStore.Register();
         EditorTab.Register();
     }
 
     protected override void Disable()
     {
         EditorTab.Unregister();
+        RuleStore.Unregister();
     }
 }

@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using AbsoluteFriends.Core;
 using AbsoluteFriends.Hooks;
 using AbsoluteFriends.Utils;
@@ -6,12 +7,14 @@ namespace AbsoluteFriends.Players;
 
 internal class RippleSpaceHooks : WatcherHooks
 {
+    private static readonly ConditionalWeakTable<Creature, StrongBox<int>> _shownRippleLayers = new();
+
     protected override Configurable<bool>[] Options => [Config.RippleSpace];
 
     private static void SynchronizeRippleLayer(Creature creature)
     {
         int rippleLayer = creature.abstractCreature.rippleLayer;
-        List<AbstractCreature> abstractPlayers = creature.room.game?.Players ?? [];
+        List<AbstractCreature> abstractPlayers = [.. creature.room.game.AllPlayers];
 
         if (abstractPlayers.All(abstractPlayer => abstractPlayer?.rippleLayer == rippleLayer) || !creature.IsTracked)
         {
@@ -22,6 +25,24 @@ internal class RippleSpaceHooks : WatcherHooks
         {
             creature.ChangeRippleLayer(leader.abstractCreature.rippleLayer);
 
+            RevealInRippleSpace(creature.room.game, creature);
+        }
+    }
+
+    private static void RevealRemoteRippleLayer(Creature creature)
+    {
+        int rippleLayer = creature.abstractCreature.rippleLayer;
+        StrongBox<int> shown = _shownRippleLayers.GetValue(creature, _ => new(rippleLayer));
+
+        if (shown.Value == rippleLayer)
+        {
+            return;
+        }
+
+        shown.Value = rippleLayer;
+
+        if (creature.IsTracked)
+        {
             RevealInRippleSpace(creature.room.game, creature);
         }
     }
@@ -107,7 +128,14 @@ internal class RippleSpaceHooks : WatcherHooks
             return;
         }
 
-        SynchronizeRippleLayer(self);
+        if (self.HasAuthority)
+        {
+            SynchronizeRippleLayer(self);
+        }
+        else
+        {
+            RevealRemoteRippleLayer(self);
+        }
     }
 
     [HookPatch(typeof(On.RoomCamera.SpriteLeaser), nameof(On.RoomCamera.SpriteLeaser.ctor))]

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace AbsoluteFriends.Manager;
 
-internal sealed partial class FriendManagerDialog
+internal partial class FriendManagerDialog
 {
     private void BuildTabs(Vector2 canvasPos, Vector2 columnPos)
     {
@@ -13,7 +13,7 @@ internal sealed partial class FriendManagerDialog
         Vector2 size = new(CanvasSize - (CanvasInset + MenuBuilder.Padding) * 2f, CanvasSize - CanvasInset * 2f - TopPadding);
         FriendManager.TabRegistration details = new("details", "Profile", tab => _ = new DetailsTab(this, tab), null);
 
-        foreach (FriendManager.TabRegistration registration in FriendManager.Tabs.Prepend(details))
+        foreach (var registration in FriendManager.Tabs.Prepend(details))
         {
             FriendTab tab = new(this, _wrapper, origin, size, registration, registration == details);
 
@@ -50,11 +50,17 @@ internal sealed partial class FriendManagerDialog
         return button;
     }
 
+    internal void RefreshManager()
+    {
+        RefreshMembership();
+        RefreshRows();
+    }
+
     private void UpdateTabs()
     {
         AbstractCreature? friend = _selectedFriend;
 
-        foreach (FriendTab tab in _tabs)
+        foreach (var tab in _tabs)
         {
             bool visible = tab.BuiltIn;
 
@@ -171,12 +177,6 @@ internal sealed partial class FriendManagerDialog
         RefreshTab();
     }
 
-    internal void RefreshManager()
-    {
-        RefreshMembership();
-        RefreshRows();
-    }
-
     private void UpdateTab()
     {
         if (_activeTab is { } tab)
@@ -195,7 +195,7 @@ internal sealed partial class FriendManagerDialog
 
     private void CloseTabs()
     {
-        foreach (FriendTab tab in _tabs)
+        foreach (var tab in _tabs)
         {
             try
             {

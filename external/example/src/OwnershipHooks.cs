@@ -5,7 +5,7 @@ using AbsoluteFriends.Options;
 
 namespace AbsoluteFriendsExample;
 
-internal sealed class OwnershipHooks : DownpourHooks
+internal class OwnershipHooks : DownpourHooks
 {
     private static readonly ConditionalWeakTable<DaddyTentacle, PhysicalObject> _ownedObjects = new();
 
@@ -54,6 +54,7 @@ internal sealed class OwnershipHooks : DownpourHooks
             return;
         }
 
+        // In Rain Meadow, the Meadow addon sends each object's owner from the game that controls the object, so no extra work is needed here.
         current.SetOwner(self.daddy);
         _ownedObjects.Remove(self);
         _ownedObjects.Add(self, current);

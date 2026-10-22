@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace AbsoluteFriends.Visualizer;
 
-internal sealed class SubjectTag
+internal class SubjectTag
 {
     public SideTag Friend { get; } = new();
 
@@ -36,7 +36,7 @@ internal sealed class SubjectTag
     }
 }
 
-internal sealed class SideTag
+internal class SideTag
 {
     private const string Placeholder = "Futile_White";
 
@@ -66,10 +66,6 @@ internal sealed class SideTag
 
     public IEnumerable<FNode> Nodes => [.. _names, .. _icons];
 
-    private FLabel Name => _names[Front];
-
-    private FSprite Icon => _icons[Front];
-
     public bool IsVisible
     {
         set
@@ -91,6 +87,10 @@ internal sealed class SideTag
             }
         }
     }
+
+    private FLabel Name => _names[Front];
+
+    private FSprite Icon => _icons[Front];
 
     public void Clear()
     {

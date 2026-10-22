@@ -25,4 +25,8 @@ public class Plugin : AddonPlugin
     protected override void Bind(Addon addon) => Players.Config.Bind(addon);
 
     protected override void BuildMenu(MenuBuilder menu) => Menu.Build(menu);
+
+    protected override void Enable() => RippleSync.Register();
+
+    protected override void Disable() => RippleSync.Unregister();
 }

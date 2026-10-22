@@ -5,9 +5,9 @@ using UnityEngine;
 
 namespace AbsoluteFriends.Manager;
 
-internal sealed partial class FriendManagerDialog
+internal partial class FriendManagerDialog
 {
-    private sealed class TabButton : OpSimpleButton
+    private class TabButton : OpSimpleButton
     {
         private readonly FriendManagerDialog _dialog;
 
@@ -31,26 +31,6 @@ internal sealed partial class FriendManagerDialog
         internal FriendTab? Represented { get; private set; }
 
         public override string DisplayDescription() => Translation.Of("Show <PLACEHOLDER>.").FillPlaceholders(_title);
-
-        internal void Represent(FriendTab tab, string title, bool active)
-        {
-            Represented = tab;
-            _title = title;
-            _active = active;
-        }
-
-        internal void Place(Vector2 position, float height, bool isTop, bool isBottom)
-        {
-            _isTop = isTop;
-            _isBottom = isBottom;
-            _pos = position;
-            _size = new Vector2(TabWidth, height - 6f);
-            Change();
-
-            _label.text = Trim(_title, height - 16f);
-            _label.alignment = FLabelAlignment.Left;
-            Snap(this);
-        }
 
         public override void Update()
         {
@@ -93,9 +73,29 @@ internal sealed partial class FriendManagerDialog
                 _rectH.sprites[index].alpha = _active ? 1f : glow;
             }
         }
+
+        internal void Represent(FriendTab tab, string title, bool active)
+        {
+            Represented = tab;
+            _title = title;
+            _active = active;
+        }
+
+        internal void Place(Vector2 position, float height, bool isTop, bool isBottom)
+        {
+            _isTop = isTop;
+            _isBottom = isBottom;
+            _pos = position;
+            _size = new Vector2(TabWidth, height - 6f);
+            Change();
+
+            _label.text = Trim(_title, height - 16f);
+            _label.alignment = FLabelAlignment.Left;
+            Snap(this);
+        }
     }
 
-    private sealed class TabScrollButton : OpSimpleImageButton
+    private class TabScrollButton : OpSimpleImageButton
     {
         internal TabScrollButton(Vector2 position, bool up) : base(position, new Vector2(TabWidth, 20f), "Big_Menu_Arrow")
         {

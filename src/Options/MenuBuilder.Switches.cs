@@ -9,21 +9,14 @@ public abstract partial class MenuBuilder
 
     private const string MixedSymbol = "pixel";
 
-    private protected enum SwitchState
-    {
-        Off,
-        Mixed,
-        On,
-    }
-
-    private protected OpSimpleImageButton? AddSwitch(string text, string description, Func<SwitchState> state, Func<bool> available, Action toggle, float span = 1f)
+    private protected OpSimpleImageButton? AddSwitch(string text, string description, Func<SwitchState> state, Func<bool> available, Action toggle, float span = 1f, string? meadowNote = null)
     {
         if (!BeginElement(span))
         {
             return null;
         }
 
-        string translated = Translate(description);
+        string translated = WithMeadowNote(Translate(description), meadowNote);
         OpSimpleImageButton button = new(
             new Vector2(_pos.x, _pos.y - Spacing * 0.5f),
             new Vector2(Spacing, Spacing),
@@ -35,7 +28,7 @@ public abstract partial class MenuBuilder
         OpLabel label = new(
             new Vector2(_pos.x + Spacing + Gap, _pos.y - Spacing * 0.5f),
             new(ElementWidth * span - Spacing - Gap, Spacing),
-            Translate(text),
+            WithMeadowMark(Translate(text), meadowNote != null),
             FLabelAlignment.Left
         )
         {
@@ -75,5 +68,12 @@ public abstract partial class MenuBuilder
         AddElements(button, label);
 
         return button;
+    }
+
+    private protected enum SwitchState
+    {
+        Off,
+        Mixed,
+        On,
     }
 }

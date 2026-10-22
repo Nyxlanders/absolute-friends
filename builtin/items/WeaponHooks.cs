@@ -83,4 +83,15 @@ internal class WeaponHooks : BaseHooks
     {
         return !self.IsFriend(obj) && orig(self, obj);
     }
+
+    [HookPatch(typeof(On.SocialEventRecognizer), nameof(On.SocialEventRecognizer.WeaponAttack))]
+    private static void On_SocialEventRecognizer_WeaponAttack(On.SocialEventRecognizer.orig_WeaponAttack orig, SocialEventRecognizer self, PhysicalObject weapon, Creature thrower, Creature victim, bool hit)
+    {
+        if (!hit && weapon.IsFriend(victim))
+        {
+            return;
+        }
+
+        orig(self, weapon, thrower, victim, hit);
+    }
 }

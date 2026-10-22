@@ -3,6 +3,7 @@
   <Folder Name="/builtin/">
     <Project Path="builtin/core/AbsoluteCore.csproj" />
     <Project Path="builtin/manager/AbsoluteManager.csproj" />
+    <Project Path="builtin/meadow/AbsoluteMeadow.csproj" />
     <Project Path="builtin/visualizer/AbsoluteVisualizer.csproj" />
     <Project Path="builtin/general/AbsoluteGeneral.csproj" />
     <Project Path="builtin/items/AbsoluteItems.csproj" />

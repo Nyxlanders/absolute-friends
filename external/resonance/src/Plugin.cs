@@ -27,4 +27,8 @@ public class Plugin : AddonPlugin
     protected override void Bind(Addon addon) => Resonance.Config.Bind(addon);
 
     protected override void BuildMenu(MenuBuilder menu) => Menu.Build(menu);
+
+    protected override void Enable() => ResonanceUtils.RegisterRemoteHandlers();
+
+    protected override void Disable() => ResonanceUtils.UnregisterRemoteHandlers();
 }

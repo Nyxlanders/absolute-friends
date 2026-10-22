@@ -11,7 +11,7 @@ internal class MushroomHooks : BaseHooks
     protected override Configurable<bool>[] Options => [Config.Mushroom];
 
     [HookPatch(typeof(IL.Player), nameof(IL.Player.Update))]
-    [HookTest([1702], ["callvirt List`1::GetEnumerator"])]
+    [HookTest([1716], ["callvirt List`1::GetEnumerator"])]
     private static void IL_Player_Update(ILContext il)
     {
         ILCursor c = new(il);

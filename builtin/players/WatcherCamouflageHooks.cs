@@ -204,7 +204,7 @@ internal class WatcherCamouflageHooks : WatcherHooks
     }
 
     [HookPatch(typeof(IL.Player), nameof(IL.Player.WatcherUpdate))]
-    [HookTest([642], ["brfalse; ldarg.0; ldfld Player::rippleRingDelay"])]
+    [HookTest([651], ["brfalse; ldarg.0; ldfld Player::rippleRingDelay"])]
     private static void IL_Player_WatcherUpdate(ILContext il)
     {
         ILCursor c = new(il);

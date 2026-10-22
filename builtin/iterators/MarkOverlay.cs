@@ -84,7 +84,7 @@ internal class MarkOverlay(Creature friend) : CosmeticSprite
             }
         ];
 
-        AddToContainer(sLeaser, rCam, rCam.ReturnFContainer("Midground"));
+        AddToContainer(sLeaser, rCam, rCam.ReturnFContainer("Foreground"));
     }
 
     public override void DrawSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)

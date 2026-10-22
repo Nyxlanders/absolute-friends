@@ -1,5 +1,6 @@
 using AbsoluteFriends.Core;
 using AbsoluteFriends.Manager;
+using AbsoluteFriends.Options;
 using AbsoluteFriends.Utils;
 using Menu;
 using Menu.Remix.MixedUI;
@@ -7,7 +8,7 @@ using UnityEngine;
 
 namespace AbsoluteFriends.FriendshipEditor;
 
-internal sealed class CreatureRow
+internal class CreatureRow
 {
     internal const float Height = EditorUi.ListRowHeight;
 
@@ -57,7 +58,7 @@ internal sealed class CreatureRow
 
     private readonly OpLabel _percent;
 
-    internal CreatureRow(FriendTab tab, ScrollList list)
+    internal CreatureRow(FriendTab tab, ScrollArea list)
     {
         _icon = new(Vector2.zero, "Futile_White")
         {
@@ -79,7 +80,7 @@ internal sealed class CreatureRow
         _relation = new(Vector2.zero, new Vector2(BarWidth, EditorUi.RowHeight), string.Empty, FLabelAlignment.Left);
         _percent = new(Vector2.zero, new Vector2(PercentWidth, EditorUi.RowHeight), string.Empty, FLabelAlignment.Right);
 
-        foreach (UIelement element in Elements)
+        foreach (var element in Elements)
         {
             tab.Add(list, element);
         }
@@ -88,8 +89,6 @@ internal sealed class CreatureRow
     private UIelement[] Elements => [_icon, _name, _barBack, _barFill, _knowFill, _center, _threshold, _tickBack, _tick, _relation, _percent];
 
     private UIelement[] Bars => [_barBack, _barFill, _knowFill, _center, _threshold, _tickBack, _tick];
-
-    private static float LabelY(float y) => y + (Height - EditorUi.RowHeight) * 0.5f;
 
     internal void ShowLikes(AbstractCreature creature, (float Like, float TempLike, float Know)? likes, float y)
     {
@@ -103,7 +102,7 @@ internal sealed class CreatureRow
         EditorUi.SetShown(_relation, false);
         EditorUi.SetShown(_percent, likes != null);
 
-        foreach (UIelement element in Bars)
+        foreach (var element in Bars)
         {
             EditorUi.SetShown(element, likes != null);
         }
@@ -139,7 +138,7 @@ internal sealed class CreatureRow
         EditorUi.SetShown(_relation, true);
         EditorUi.SetShown(_percent, true);
 
-        foreach (UIelement element in Bars)
+        foreach (var element in Bars)
         {
             EditorUi.SetShown(element, false);
         }
@@ -152,11 +151,13 @@ internal sealed class CreatureRow
 
     internal void Hide()
     {
-        foreach (UIelement element in Elements)
+        foreach (var element in Elements)
         {
             EditorUi.SetShown(element, false);
         }
     }
+
+    private static float LabelY(float y) => y + (Height - EditorUi.RowHeight) * 0.5f;
 
     private void ShowCreature(AbstractCreature creature, float y)
     {

@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace AbsoluteFriends.FriendshipEditor;
 
-internal sealed class ReputationView : EditorView
+internal class ReputationView : EditorView
 {
     private readonly CreatureCommunities _communities;
 
@@ -14,7 +14,7 @@ internal sealed class ReputationView : EditorView
 
     private readonly OpComboBox? _region;
 
-    private readonly ScrollList _list;
+    private readonly ScrollArea _list;
 
     private readonly List<ReputationRow> _rows = [];
 
@@ -43,7 +43,7 @@ internal sealed class ReputationView : EditorView
         y = AddRuleList(y);
         _list = EditorUi.List(Add, width, Translation.Of(game.IsStorySession ? "Regional Reputation" : "Community Reputation"), y);
 
-        foreach ((string key, string name) in game.IsStorySession ? Regions() : Communities())
+        foreach (var (key, name) in game.IsStorySession ? Regions() : Communities())
         {
             _rows.Add(new ReputationRow(tab, _list, key, name));
         }
@@ -63,17 +63,6 @@ internal sealed class ReputationView : EditorView
         && friend.state is PlayerState state
         && RainWorldUtils.CurrentGame is { session.creatureCommunities: { } communities } game
         && (game.IsStorySession ? state.playerNumber == 0 : state.playerNumber < communities.playerOpinions.GetLength(2));
-
-    private static int PlayerNumber(AbstractCreature? friend) => friend?.state is PlayerState state ? state.playerNumber : 0;
-
-    private static string CommunityName(string community) => community == Rules.All ? Translation.Of("Every Community") : community;
-
-    private static string RegionName(string region) => region switch
-    {
-        Rules.All => Translation.Of("Every Region"),
-        RuleEffects.GlobalRegion => "Global",
-        _ => region,
-    };
 
     internal override bool IsVisibleFor(AbstractCreature friend) => IsAvailableFor(friend);
 
@@ -97,7 +86,7 @@ internal sealed class ReputationView : EditorView
     {
         float y = _list.ContentHeight;
 
-        foreach (ReputationRow row in _rows)
+        foreach (var row in _rows)
         {
             y -= ReputationRow.Height;
             row.Show(y, Game.IsStorySession ? Saved(ShownCommunity, RegionIndex(row.Key)) : Saved(new(row.Key), -1));
@@ -108,9 +97,20 @@ internal sealed class ReputationView : EditorView
 
     protected override void Apply() => RuleEffects.ApplyReputation(Game);
 
+    private static int PlayerNumber(AbstractCreature? friend) => friend?.state is PlayerState state ? state.playerNumber : 0;
+
+    private static string CommunityName(string community) => community == Rules.All ? Translation.Of("Every Community") : community;
+
+    private static string RegionName(string region) => region switch
+    {
+        Rules.All => Translation.Of("Every Region"),
+        RuleEffects.GlobalRegion => "Global",
+        _ => region,
+    };
+
     private IEnumerable<(string Key, string Name)> Communities()
     {
-        foreach (string name in CreatureCommunities.CommunityID.values.entries)
+        foreach (var name in CreatureCommunities.CommunityID.values.entries)
         {
             if (name != CreatureCommunities.CommunityID.None.value && new CreatureCommunities.CommunityID(name).Index - 1 < _communities.playerOpinions.GetLength(0))
             {

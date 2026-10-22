@@ -18,7 +18,7 @@ internal class FireEggHooks : DownpourHooks
     }
 
     [HookPatch(typeof(IL.JokeRifle), nameof(IL.JokeRifle.Use))]
-    [HookTest([871], ["callvirt PhysicalObject::get_firstChunk"])]
+    [HookTest([886], ["callvirt PhysicalObject::get_firstChunk"])]
     private static void IL_JokeRifle_Use(ILContext il) => il.JokeRifleUse<FireEgg>();
 
     [HookPatch(typeof(IL.MoreSlugcats.FireEgg), nameof(IL.MoreSlugcats.FireEgg.Update))]

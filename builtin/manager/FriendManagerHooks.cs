@@ -29,6 +29,14 @@ internal class FriendManagerHooks : BaseHooks
         return pending;
     }
 
+    private static bool IsShortcutDown(KeyCode key)
+    {
+        using (InputBlocker.Allow())
+        {
+            return Input.GetKeyDown(key);
+        }
+    }
+
     private static void TryOpen(ProcessManager manager, RainWorldGame game)
     {
         if (manager.IsSwitchingProcesses())
@@ -56,9 +64,9 @@ internal class FriendManagerHooks : BaseHooks
     [HookPatch(typeof(On.RainWorld), nameof(On.RainWorld.Update))]
     private static void On_RainWorld_Update(On.RainWorld.orig_Update orig, RainWorld self)
     {
-        KeyCode key = Config.FriendManagerKey.Value;
+        KeyCode key = Config.ManagerKey.Value;
 
-        if (key != KeyCode.None && Time.frameCount != _shortcutFrame && Input.GetKeyDown(key))
+        if (key != KeyCode.None && Time.frameCount != _shortcutFrame && IsShortcutDown(key))
         {
             _shortcutFrame = Time.frameCount;
             _shortcutTime = Time.unscaledTime;

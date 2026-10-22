@@ -1,6 +1,6 @@
 namespace AbsoluteFriends.Addons;
 
-public sealed class OptionGroup
+public class OptionGroup
 {
     internal OptionGroup(Addon addon, string label, string description, IReadOnlyList<Configurable<bool>> options)
     {

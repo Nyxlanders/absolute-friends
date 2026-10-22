@@ -5,7 +5,7 @@ namespace AbsoluteFriends.Options;
 
 public abstract partial class MenuBuilder
 {
-    private sealed class StyledComboBox(Configurable<string> option, Vector2 position, float width, List<ListItem> items, Action<ListItem, FLabel, bool> styleItem)
+    private class StyledComboBox(Configurable<string> option, Vector2 position, float width, List<ListItem> items, Action<ListItem, FLabel, bool> styleItem)
         : OpComboBox(option, position, width, items)
     {
         public override void GrafUpdate(float timeStacker)
@@ -16,7 +16,7 @@ public abstract partial class MenuBuilder
         }
     }
 
-    private sealed class StyledListBox(Configurable<string> option, Vector2 position, float width, List<ListItem> items, ushort visibleItems, Action<ListItem, FLabel, bool> styleItem)
+    private class StyledListBox(Configurable<string> option, Vector2 position, float width, List<ListItem> items, ushort visibleItems, Action<ListItem, FLabel, bool> styleItem)
         : OpListBox(option, position, width, items, visibleItems, true)
     {
         public override void GrafUpdate(float timeStacker)
@@ -31,7 +31,7 @@ public abstract partial class MenuBuilder
     {
         if (selected != null && allItems != null)
         {
-            foreach (ListItem item in allItems)
+            foreach (var item in allItems)
             {
                 if (item.name == value)
                 {

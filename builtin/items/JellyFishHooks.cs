@@ -22,8 +22,11 @@ internal class JellyFishHooks : BaseHooks
     [HookPatch(typeof(On.JellyFish), nameof(On.JellyFish.Tossed))]
     private static void On_JellyFish_Tossed(On.JellyFish.orig_Tossed orig, JellyFish self, Creature tossedBy)
     {
-        self.SetOwner();
-        self.SetOwner(tossedBy);
+        if (tossedBy != null)
+        {
+            self.SetOwner();
+            self.SetOwner(tossedBy);
+        }
 
         orig(self, tossedBy);
     }

@@ -22,6 +22,7 @@ internal static partial class ResonanceUtils
     public static void ResetTrackers()
     {
         _trackers = new();
+        _pendingWarps.Clear();
     }
 
     private static bool ShouldVibrate(float progress, int reflection) => progress >= 0.1f || reflection >= 5;
@@ -56,9 +57,9 @@ internal static partial class ResonanceUtils
                 && resonators.All(abstractCreature => abstractCreature.realizedCreature is { } creature && room.IsInGate(creature));
         }
 
-        private List<AbstractCreature> Resonators(Func<Creature, bool> predicate, bool isUngathered = false)
+        private List<AbstractCreature> Resonators(Func<Creature, bool> predicate, bool isUngathered = false, bool isLocalOnly = false)
         {
-            List<AbstractCreature> abstractPlayers = room.game?.AlivePlayers ?? [];
+            List<AbstractCreature> abstractPlayers = [.. room.game?.AllPlayers.Where(abstractPlayer => abstractPlayer.state is { dead: false } && (!isLocalOnly || abstractPlayer.HasAuthority)) ?? []];
 
             if (!Core.Config.FriendSharing.IsActive)
             {
@@ -111,6 +112,12 @@ internal static partial class ResonanceUtils
 
         private void Echo(ResonanceType type, List<AbstractCreature> resonated)
         {
+            room.ShowEcho(type, resonated);
+            room.SendEcho(type, resonated);
+        }
+
+        private void ShowEcho(ResonanceType type, IEnumerable<AbstractCreature> resonated)
+        {
             if (Config.ResonanceMelt.IsActive && type != ResonanceType.Ungathered)
             {
                 room.AddObject(new ResonanceMelt(room));
@@ -127,6 +134,7 @@ internal static partial class ResonanceUtils
             if (
                 resonators.Count == 0
                 || resonatees.Count == 0
+                || !resonators.Lead.HasAuthority
                 || resonators.FirstOrDefault(abstractCreature => !abstractCreature.AwaitWarp(predicate)) is not { } origin
             )
             {
@@ -142,15 +150,14 @@ internal static partial class ResonanceUtils
 
             foreach (var abstractCreature in resonatees)
             {
-                abstractCreature.WarpAndMend(world, worldCoordinate, predicate, profile);
-                abstractCreature.Reflect(duration, sharedCost);
+                abstractCreature.Apply(world, worldCoordinate, abstractCreature.CanWarp(predicate, profile), abstractCreature.CanMend(predicate, profile), profile, duration, sharedCost);
             }
 
             if (type != ResonanceType.Automatic)
             {
                 foreach (var abstractPlayer in resonators.Except(resonatees))
                 {
-                    abstractPlayer.Reflect(duration, sharedCost);
+                    abstractPlayer.Apply(world, worldCoordinate, false, false, profile, duration, sharedCost);
                 }
             }
 
@@ -159,9 +166,9 @@ internal static partial class ResonanceUtils
             return true;
         }
 
-        private bool Resonate(Func<Creature, bool> predicate, ResonanceType type, bool isUngathered = false)
+        private bool Resonate(Func<Creature, bool> predicate, ResonanceType type, bool isUngathered = false, bool isLocalOnly = false)
         {
-            List<AbstractCreature> resonators = room.Resonators(predicate, isUngathered);
+            List<AbstractCreature> resonators = room.Resonators(predicate, isUngathered, isLocalOnly);
 
             return room.Resonate(resonators, room.Resonatees(resonators, predicate, type, out ResonanceProfile profile), profile, predicate, type);
         }
@@ -177,6 +184,11 @@ internal static partial class ResonanceUtils
         public void ResonateApart(Func<T, Creature, bool> isInGate)
         {
             gate.room?.Resonate(creature => isInGate(gate, creature), ResonanceType.Automatic, isUngathered: true);
+        }
+
+        public void ResonateHere(Func<T, Creature, bool> isInGate)
+        {
+            gate.room?.Resonate(creature => isInGate(gate, creature), ResonanceType.Automatic, isUngathered: true, isLocalOnly: true);
         }
     }
 }

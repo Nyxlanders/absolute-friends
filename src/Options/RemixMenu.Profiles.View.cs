@@ -4,7 +4,7 @@ using Menu.Remix.MixedUI;
 
 namespace AbsoluteFriends.Options;
 
-internal sealed partial class RemixMenu
+internal partial class RemixMenu
 {
     private static string ProfileTime(string? value)
     {
@@ -78,8 +78,7 @@ internal sealed partial class RemixMenu
             name!,
             "Edits this profile's name.",
             "",
-            value => RenameProfile(slot, value),
-            () => CopyProfile(slot)
+            value => RenameProfile(slot, value)
         );
 
         SetColumns(17);
@@ -230,7 +229,7 @@ internal sealed partial class RemixMenu
         }
     }
 
-    private sealed class ProfileView(ProfileEditor editor, OpLabel created, OpLabel modified, OpLabel addons, OpLabel options, OpLabel unavailable)
+    private class ProfileView(ProfileEditor editor, OpLabel created, OpLabel modified, OpLabel addons, OpLabel options, OpLabel unavailable)
     {
         internal ProfileEditor Editor { get; } = editor;
 

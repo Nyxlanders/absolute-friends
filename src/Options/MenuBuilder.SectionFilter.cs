@@ -5,7 +5,7 @@ namespace AbsoluteFriends.Options;
 
 public abstract partial class MenuBuilder
 {
-    private protected sealed class SectionFilter
+    private protected class SectionFilter
     {
         private Section[] _sections = [];
 

@@ -1,5 +1,6 @@
 using AbsoluteFriends.Core;
 using AbsoluteFriends.Manager;
+using AbsoluteFriends.Options;
 using AbsoluteFriends.Utils;
 using Menu.Remix.MixedUI;
 using UnityEngine;
@@ -12,7 +13,7 @@ internal abstract class CreatureView : EditorView
 
     private readonly OpComboBox _type;
 
-    private readonly ScrollList _list;
+    private readonly ScrollArea _list;
 
     private readonly List<CreatureRow> _creatureRows = [];
 
@@ -26,7 +27,7 @@ internal abstract class CreatureView : EditorView
         _type.OnValueUpdate += delegate { ChangeSubject(); };
         y -= StatRow.Height;
 
-        foreach (Stat stat in stats)
+        foreach (var stat in stats)
         {
             y = AddStat(stat, y);
         }
@@ -38,16 +39,6 @@ internal abstract class CreatureView : EditorView
     private string TypeSubject => _type.value;
 
     protected static bool IsFriendTarget(AbstractCreature friend) => friend.IsPlayer || friend.IsTracked;
-
-    private static IEnumerable<(string Key, string Name)> Types() => StaticWorld.creatureTemplates
-        .Where(template => template is { virtualCreature: false } && template.type != CreatureTemplate.Type.Slugcat)
-        .Select(template => template.type.value)
-        .Distinct()
-        .OrderBy(type => type, StringComparer.Ordinal)
-        .Select(type => (type, type))
-        .Prepend((Rules.All, Translation.Of("Every Creature Type")));
-
-    private static string TypeName(string type) => type == Rules.All ? Translation.Of("Every Creature Type") : type;
 
     protected abstract bool Knows(AbstractCreature creature, AbstractCreature target);
 
@@ -72,6 +63,16 @@ internal abstract class CreatureView : EditorView
     }
 
     protected override void Loaded() => _list.ScrollToTop();
+
+    private static IEnumerable<(string Key, string Name)> Types() => StaticWorld.creatureTemplates
+        .Where(template => template is { virtualCreature: false } && template.type != CreatureTemplate.Type.Slugcat)
+        .Select(template => template.type.value)
+        .Distinct()
+        .OrderBy(type => type, StringComparer.Ordinal)
+        .Select(type => (type, type))
+        .Prepend((Rules.All, Translation.Of("Every Creature Type")));
+
+    private static string TypeName(string type) => type == Rules.All ? Translation.Of("Every Creature Type") : type;
 
     private void ShowCreatures(List<AbstractCreature> creatures, AbstractCreature target)
     {

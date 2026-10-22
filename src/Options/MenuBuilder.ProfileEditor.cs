@@ -5,7 +5,7 @@ namespace AbsoluteFriends.Options;
 
 public abstract partial class MenuBuilder
 {
-    private protected sealed class ProfileEditor
+    private protected class ProfileEditor
     {
         private readonly UIelement _display;
 
@@ -64,7 +64,7 @@ public abstract partial class MenuBuilder
         {
             SetVisible(_display, visible && !IsEditing);
 
-            foreach (UIelement action in _actions)
+            foreach (var action in _actions)
             {
                 SetVisible(action, visible && !IsEditing);
             }
@@ -87,7 +87,7 @@ public abstract partial class MenuBuilder
         }
     }
 
-    private sealed class ProfileNameTextBox(ConfigurableBase configurable, Vector2 pos, float sizeX) : OpTextBox(configurable, pos, sizeX)
+    private class ProfileNameTextBox(ConfigurableBase configurable, Vector2 pos, float sizeX) : OpTextBox(configurable, pos, sizeX)
     {
         public override string value
         {
@@ -148,34 +148,28 @@ public abstract partial class MenuBuilder
         return editor;
     }
 
-    private protected ProfileEditor AddProfileEditor(OpLabel label, string description, string value, Action<string> save, Action copy)
+    private protected ProfileEditor AddProfileEditor(OpLabel label, string description, string value, Action<string> save)
     {
         string note = Translate(description);
         float width = label.size.x - Gap;
         float actionWidth = Spacing;
         float editorWidth = width - actionWidth * 2f - Gap * 2f;
-        float actionsWidth = Spacing * 2f + Gap * 2f;
+        float actionsWidth = Spacing + Gap;
 
         label.size = new Vector2(width - actionsWidth, label.size.y);
 
         OpTextBox textBox = CreateProfileNameTextBox(value, note, label.pos, editorWidth);
         OpSimpleImageButton saveButton = CreateProfileImageButton(label.pos.x + editorWidth + Gap, label.pos.y, "Menu_Symbol_CheckBox", "Saves the entered profile name.");
         OpSimpleImageButton cancelButton = CreateProfileImageButton(label.pos.x + editorWidth + actionWidth + Gap * 2f, label.pos.y, "Menu_Symbol_Clear_All", "Cancels editing the profile name.");
-        float actionsX = label.pos.x + width - actionsWidth + Gap;
-        OpSimpleImageButton copyButton = CreateProfileImageButton(actionsX, label.pos.y, "Menu_Symbol_Dont_Shuffle", "Copies this profile under a generated name.");
-        OpSimpleImageButton renameButton = CreateProfileImageButton(actionsX + Spacing + Gap, label.pos.y, "Menu_Symbol_Shuffle", description);
-        ProfileEditor editor = new(label, [copyButton, renameButton], text => label.text = text, textBox, saveButton, cancelButton, value);
+        OpSimpleImageButton renameButton = CreateProfileImageButton(label.pos.x + width - actionsWidth + Gap, label.pos.y, "modInputCursor", description);
+        ProfileEditor editor = new(label, [renameButton], text => label.text = text, textBox, saveButton, cancelButton, value);
 
-        copyButton.OnClick += delegate
-        {
-            copy();
-        };
         renameButton.OnClick += delegate
         {
             editor.Begin();
         };
         BindProfileEditor(editor, saveButton, cancelButton, save);
-        AddElements(textBox, saveButton, cancelButton, copyButton, renameButton);
+        AddElements(textBox, saveButton, cancelButton, renameButton);
         editor.RefreshVisibility(true);
 
         return editor;

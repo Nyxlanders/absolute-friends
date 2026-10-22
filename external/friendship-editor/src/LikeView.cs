@@ -3,13 +3,11 @@ using AbsoluteFriends.Options;
 
 namespace AbsoluteFriends.FriendshipEditor;
 
-internal sealed class LikeView(FriendTab tab, RainWorldGame game, float y) : CreatureView(tab, game, y, Stat.Like, Stat.TempLike, Stat.Know)
+internal class LikeView(FriendTab tab, RainWorldGame game, float y) : CreatureView(tab, game, y, Stat.Like, Stat.TempLike, Stat.Know)
 {
     internal override string Title => "Like";
 
     internal static bool IsAvailableFor(AbstractCreature friend) => Config.LikeEditor.IsActive && IsFriendTarget(friend);
-
-    private static SocialMemory.Relationship? Memory(AbstractCreature creature, AbstractCreature target) => creature.state?.socialMemory?.GetRelationship(target.ID);
 
     internal override bool IsVisibleFor(AbstractCreature friend) => IsAvailableFor(friend);
 
@@ -19,4 +17,6 @@ internal sealed class LikeView(FriendTab tab, RainWorldGame game, float y) : Cre
         row.ShowLikes(creature, Memory(creature, target) is { } memory ? (memory.like, memory.tempLike, memory.know) : null, y);
 
     protected override void Apply() => RuleEffects.ApplyLikes(Game);
+
+    private static SocialMemory.Relationship? Memory(AbstractCreature creature, AbstractCreature target) => creature.state?.socialMemory?.GetRelationship(target.ID);
 }

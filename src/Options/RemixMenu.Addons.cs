@@ -4,7 +4,7 @@ using Menu.Remix.MixedUI;
 
 namespace AbsoluteFriends.Options;
 
-internal sealed partial class RemixMenu
+internal partial class RemixMenu
 {
     private void BuildAddonGroups(OpTab tab)
     {
@@ -68,7 +68,7 @@ internal sealed partial class RemixMenu
         if (addon.Enabled is { } enabled)
         {
             AddCheckBox(enabled, enabled: addon.AddonDependenciesApplied);
-            AddLabel(addon.AddonDescription, alignment: FLabelAlignment.Left, enabled: addon.AddonDescription.Length > 0);
+            AddDescription(addon.AddonDescription);
         }
         else
         {

@@ -11,6 +11,8 @@ internal abstract class EditorView(FriendTab tab, RainWorldGame game)
 
     private RuleList? _rules;
 
+    private Rules? _loaded;
+
     internal FriendTab Tab { get; } = tab;
 
     internal abstract string Title { get; }
@@ -31,7 +33,7 @@ internal abstract class EditorView(FriendTab tab, RainWorldGame game)
 
     internal void SetShown(bool shown)
     {
-        foreach (UIelement element in _elements)
+        foreach (var element in _elements)
         {
             EditorUi.SetShown(element, shown);
         }
@@ -50,7 +52,14 @@ internal abstract class EditorView(FriendTab tab, RainWorldGame game)
 
         Rules rules = RuleStore.For(Game);
 
-        foreach (StatRow row in _stats)
+        if (FriendManager.IsReadOnly && _rules != null && rules != _loaded)
+        {
+            Load(null, false);
+
+            return;
+        }
+
+        foreach (var row in _stats)
         {
             row.Refresh(rules.Resolve(KeyOf(row.Stat)));
         }
@@ -103,6 +112,9 @@ internal abstract class EditorView(FriendTab tab, RainWorldGame game)
         }
 
         Rules rules = RuleStore.For(Game);
+
+        _loaded = rules;
+
         List<(RuleKey Key, string Text)> configured = [.. ConfiguredRules(target)];
         RuleKey? shown = selection ?? _rules.Choose([.. configured.Select(rule => rule.Key)], _stats.Select(row => KeyOf(row.Stat)), fallback);
 
@@ -111,7 +123,7 @@ internal abstract class EditorView(FriendTab tab, RainWorldGame game)
             ShowKey(chosen);
         }
 
-        foreach (StatRow row in _stats)
+        foreach (var row in _stats)
         {
             RuleKey key = KeyOf(row.Stat);
 
@@ -135,14 +147,14 @@ internal abstract class EditorView(FriendTab tab, RainWorldGame game)
 
     private void ApplyRules()
     {
-        if (Target == null)
+        if (Target == null || FriendManager.IsReadOnly)
         {
             return;
         }
 
         Rules rules = RuleStore.For(Game);
 
-        foreach (StatRow row in _stats)
+        foreach (var row in _stats)
         {
             if (row.EditedRule is not { } rule || rule.IsValid(row.Stat))
             {
@@ -155,6 +167,11 @@ internal abstract class EditorView(FriendTab tab, RainWorldGame game)
 
     private void RemoveRule(RuleKey key)
     {
+        if (FriendManager.IsReadOnly)
+        {
+            return;
+        }
+
         RuleStore.For(Game).Set(key, null);
         Save();
     }

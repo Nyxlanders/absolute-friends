@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace AbsoluteFriends.Manager;
 
-internal sealed partial class FriendManagerDialog
+internal partial class FriendManagerDialog
 {
     private void UpdateCursor()
     {
@@ -66,7 +66,7 @@ internal sealed partial class FriendManagerDialog
             .ThenBy(wrapper => CenterOf(wrapper).x)
             .FirstOrDefault();
 
-        foreach (MenuObject wrapper in content)
+        foreach (var wrapper in content)
         {
             wrapper.nextSelectable[0] = Nearest(wrapper, content, Vector2.left) ?? activeButton ?? row ?? wrapper;
             wrapper.nextSelectable[1] = Nearest(wrapper, content, Vector2.up) ?? wrapper;
@@ -74,7 +74,7 @@ internal sealed partial class FriendManagerDialog
             wrapper.nextSelectable[3] = Nearest(wrapper, content, Vector2.down) ?? wrapper;
         }
 
-        foreach (FriendRow friendRow in _rows)
+        foreach (var friendRow in _rows)
         {
             friendRow.Focus.nextSelectable[2] = activeButton ?? entry ?? friendRow.Focus;
         }
@@ -103,7 +103,7 @@ internal sealed partial class FriendManagerDialog
         ? element.ScreenPos + element.size * 0.5f
         : CenterPositionOfObject((PositionedMenuObject)menuObject);
 
-    private sealed class FocusCursor
+    private class FocusCursor
     {
         private readonly FSprite[] _sprites = new FSprite[4];
 
@@ -187,7 +187,7 @@ internal sealed partial class FriendManagerDialog
 
         internal void Remove()
         {
-            foreach (FSprite sprite in _sprites)
+            foreach (var sprite in _sprites)
             {
                 sprite.RemoveFromContainer();
             }

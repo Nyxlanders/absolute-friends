@@ -11,6 +11,8 @@ internal static partial class ResonanceUtils
     {
         public ResonanceTracker Tracker => _trackers.GetOrCreateValue(abstractCreature);
 
+        private ResonanceProfile Profile => ResonanceProfile.Read(abstractCreature);
+
         public ResonanceTracker? FindTracker()
         {
             return _trackers.TryGetValue(abstractCreature, out ResonanceTracker tracker) ? tracker : null;
@@ -61,6 +63,25 @@ internal static partial class ResonanceUtils
             abstractCreature.remainInDenCounter = 0;
         }
 
+        private void ReleaseFromHolders()
+        {
+            foreach (var grasp in abstractCreature.realizedCreature?.grabbedBy.ToList() ?? [])
+            {
+                if (grasp?.grabber is { HasAuthority: true })
+                {
+                    grasp.Release();
+                }
+            }
+
+            foreach (var stick in abstractCreature.stuckObjects.ToList())
+            {
+                if (stick is AbstractPhysicalObject.CreatureGripStick && stick.B == abstractCreature && stick.A.HasAuthority)
+                {
+                    stick.Deactivate();
+                }
+            }
+        }
+
         private void Warp(World world, WorldCoordinate worldCoordinate)
         {
             AbstractRoom? abstractRoom = world?.GetAbstractRoom(worldCoordinate);
@@ -105,6 +126,7 @@ internal static partial class ResonanceUtils
             if (creature == null)
             {
                 abstractCreature.RealizeInRoom();
+                abstractCreature.MoveFollowingCameras(room);
             }
             else
             {
@@ -115,6 +137,7 @@ internal static partial class ResonanceUtils
                 if (creature.room != room)
                 {
                     creature.SpitOutOfShortCut(tile, room, true);
+                    abstractCreature.MoveFollowingCameras(room);
 
                     return;
                 }
@@ -125,6 +148,17 @@ internal static partial class ResonanceUtils
                 {
                     bodyChunk.HardSetPosition(position + Custom.RNV());
                     bodyChunk.vel *= 0f;
+                }
+            }
+        }
+
+        private void MoveFollowingCameras(Room room)
+        {
+            foreach (var camera in room.game?.cameras ?? [])
+            {
+                if (camera?.followAbstractCreature == abstractCreature && camera.room != room)
+                {
+                    camera.MoveCamera(room, -1);
                 }
             }
         }
@@ -167,10 +201,23 @@ internal static partial class ResonanceUtils
             }
         }
 
-        private void WarpAndMend(World world, WorldCoordinate worldCoordinate, Func<Creature, bool> predicate, ResonanceProfile profile)
+        private void Apply(World world, WorldCoordinate worldCoordinate, bool canWarp, bool canMend, ResonanceProfile profile, int duration, int cost)
         {
-            bool canWarp = abstractCreature.CanWarp(predicate, profile);
-            bool canMend = abstractCreature.CanMend(predicate, profile);
+            if (!abstractCreature.HasAuthority)
+            {
+                if (canWarp)
+                {
+                    abstractCreature.ReleaseFromHolders();
+                    abstractCreature.SendRelease();
+                }
+
+                if (abstractCreature.SendApply(world, worldCoordinate, canWarp, canMend, profile, duration, cost))
+                {
+                    abstractCreature.Shake(duration);
+                }
+
+                return;
+            }
 
             if (canMend)
             {
@@ -180,9 +227,9 @@ internal static partial class ResonanceUtils
             {
                 abstractCreature.Warp(world, worldCoordinate);
             }
-        }
 
-        private ResonanceProfile Profile => ResonanceProfile.Read(abstractCreature);
+            abstractCreature.Reflect(duration, cost);
+        }
 
         private int GetWarpCost(Room room)
         {
@@ -261,6 +308,8 @@ internal static partial class ResonanceUtils
 
     extension(IEnumerable<AbstractCreature> abstractCreatures)
     {
+        private AbstractCreature Lead => abstractCreatures.OrderBy(abstractCreature => abstractCreature.SharedKey, StringComparer.Ordinal).First();
+
         private ResonanceProfile Profile => abstractCreatures.Select(abstractCreature => abstractCreature.Profile).DefaultIfEmpty(ResonanceProfile.Zero).Aggregate((profile, other) => profile.Min(other));
     }
 

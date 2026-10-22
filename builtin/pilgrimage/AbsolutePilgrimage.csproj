@@ -10,4 +10,9 @@
     <ProjectReference Include="..\core\AbsoluteCore.csproj" Private="false" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="MonoMod.RuntimeDetour" HintPath="$(LibraryPath)MonoMod.RuntimeDetour.dll" Private="false" />
+    <Reference Include="Rain Meadow" HintPath="$(LibraryPath)Rain Meadow.dll" Private="false" />
+  </ItemGroup>
+
 </Project>

@@ -4,15 +4,15 @@ using UnityEngine;
 
 namespace AbsoluteFriends.Manager;
 
-internal sealed partial class FriendManagerDialog
+internal partial class FriendManagerDialog
 {
-    private sealed class ListScrollBar : UIelement
+    private class ListScrollBar : UIelement
     {
         internal const float Width = 30f;
 
-        private const float KnobRadius = 5f;
-
         internal const float LineOverhang = 25f;
+
+        private const float KnobRadius = 5f;
 
         private readonly FriendManagerDialog _dialog;
 

@@ -11,7 +11,7 @@ internal class ResonanceRevivalHooks : BaseHooks
     protected override string? Subject => "Resonance Revival";
 
     [HookPatch(typeof(On.JollyCoop.JollyHUD.JollyMeter.PlayerIcon), nameof(On.JollyCoop.JollyHUD.JollyMeter.PlayerIcon.Update))]
-    private static void On_JollyMeter_PlayerIcon_Update(On.JollyCoop.JollyHUD.JollyMeter.PlayerIcon.orig_Update orig, JollyMeter.PlayerIcon self)
+    private static void On_PlayerIcon_Update(On.JollyCoop.JollyHUD.JollyMeter.PlayerIcon.orig_Update orig, JollyMeter.PlayerIcon self)
     {
         orig(self);
 

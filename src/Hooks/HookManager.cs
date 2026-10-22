@@ -25,8 +25,8 @@ internal static class HookManager
 
         try
         {
-            IEnumerable<Type> hookTypes = assembly.GetTypes().Where(
-                t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(BaseHooks))
+            IEnumerable<Type> hookTypes = LoadableTypes(assembly).Where(
+                type => type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(BaseHooks))
             );
 
             foreach (var type in hookTypes)
@@ -131,6 +131,51 @@ internal static class HookManager
         }
     }
 
+    internal static void Refresh()
+    {
+        if (_isBinding)
+        {
+            return;
+        }
+
+        _isBinding = true;
+
+        try
+        {
+            Initialize();
+
+            AddonRegistry.UpdateRunningStates();
+
+            foreach (var hook in _activeHooks.ToArray())
+            {
+                if (hook.IsEnabled == hook.IsApplied)
+                {
+                    continue;
+                }
+
+                if (hook.IsEnabled)
+                {
+                    hook.Enable();
+                }
+                else
+                {
+                    hook.Disable();
+
+                    Reporter.LogInfo($"{hook.Name}: Hooks removed");
+                }
+            }
+
+            foreach (var binding in Bindings)
+            {
+                binding.Report();
+            }
+        }
+        finally
+        {
+            _isBinding = false;
+        }
+    }
+
     internal static void OnDisable()
     {
         _isInit = false;
@@ -163,5 +208,17 @@ internal static class HookManager
         OnEnable();
 
         Reporter.LogInfo("Configurations saved");
+    }
+
+    private static IEnumerable<Type> LoadableTypes(Assembly assembly)
+    {
+        try
+        {
+            return assembly.GetTypes();
+        }
+        catch (ReflectionTypeLoadException exception)
+        {
+            return exception.Types.Where(type => type != null);
+        }
     }
 }

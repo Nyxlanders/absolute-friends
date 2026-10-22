@@ -23,7 +23,7 @@ internal static class ProfileStore
         {
             Directory.CreateDirectory(FolderPath);
 
-            foreach (string path in Directory.GetFiles(FolderPath, "*.json"))
+            foreach (var path in Directory.GetFiles(FolderPath, "*.json"))
             {
                 try
                 {
@@ -35,7 +35,7 @@ internal static class ProfileStore
                         profile.ModifiedAt = Timestamp(profile.ModifiedAt, File.GetLastWriteTimeUtc(path));
                         profile.Addons ??= [];
 
-                        foreach (ProfileAddon addon in profile.Addons.Values)
+                        foreach (var addon in profile.Addons.Values)
                         {
                             addon.Options ??= [];
                         }

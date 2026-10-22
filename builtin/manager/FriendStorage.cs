@@ -6,42 +6,7 @@ public static class FriendStorage
 
     private static readonly FriendSaveData.Store<State> _states = new(save => new(save));
 
-    extension(AbstractCreature abstractCreature)
-    {
-        public string? GetFriendData(string key) => !string.IsNullOrEmpty(key) && _states.For(abstractCreature) is { } state
-            && state.Values.TryGetValue((abstractCreature.SaveDataKey, key), out string value)
-            ? value
-            : null;
-
-        public void SetFriendData(string key, string? value)
-        {
-            if (string.IsNullOrEmpty(key) || _states.For(abstractCreature) is not { } state)
-            {
-                return;
-            }
-
-            if (FriendSaveData.Assign(state.Values, (abstractCreature.SaveDataKey, key), value))
-            {
-                state.Write();
-            }
-        }
-
-        internal void ClearFriendData()
-        {
-            if (_states.For(abstractCreature) is not { } state)
-            {
-                return;
-            }
-
-            string creature = abstractCreature.SaveDataKey;
-
-            if (state.Values.Keys.Where(entry => entry.Creature == creature).ToList() is { Count: > 0 } entries)
-            {
-                entries.ForEach(entry => state.Values.Remove(entry));
-                state.Write();
-            }
-        }
-    }
+    internal static (string Key, IEnumerable<string> Entries) Export(RainWorldGame game) => (SaveKey, _states.For(game).Entries);
 
     private static bool TryReadEntry(string entry, out (string Creature, string Key) key, out string value)
     {
@@ -81,7 +46,7 @@ public static class FriendStorage
         }
     }
 
-    private sealed class State
+    private class State
     {
         internal readonly Dictionary<(string Creature, string Key), string> Values = [];
 
@@ -91,7 +56,7 @@ public static class FriendStorage
         {
             _save = save;
 
-            foreach (string entry in FriendSaveData.ReadEntries(save, SaveKey))
+            foreach (var entry in FriendSaveData.ReadEntries(save, SaveKey))
             {
                 if (TryReadEntry(entry, out var key, out string value))
                 {
@@ -100,9 +65,48 @@ public static class FriendStorage
             }
         }
 
-        internal void Write() => FriendSaveData.WriteEntries(_save, SaveKey, Values
+        internal IEnumerable<string> Entries => Values
             .OrderBy(pair => pair.Key.Creature, StringComparer.Ordinal)
             .ThenBy(pair => pair.Key.Key, StringComparer.Ordinal)
-            .Select(pair => $"{pair.Key.Creature}={FriendSaveData.Encode(pair.Key.Key)}={FriendSaveData.Encode(pair.Value)}"));
+            .Select(pair => $"{pair.Key.Creature}={FriendSaveData.Encode(pair.Key.Key)}={FriendSaveData.Encode(pair.Value)}");
+
+        internal void Write() => FriendSaveData.WriteEntries(_save, SaveKey, Entries);
+    }
+
+    extension(AbstractCreature abstractCreature)
+    {
+        public string? GetFriendData(string key) => !string.IsNullOrEmpty(key) && _states.For(abstractCreature) is { } state
+            && state.Values.TryGetValue((abstractCreature.SaveDataKey, key), out string value)
+            ? value
+            : null;
+
+        public void SetFriendData(string key, string? value)
+        {
+            if (string.IsNullOrEmpty(key) || FriendSaveData.IsReadOnly || _states.For(abstractCreature) is not { } state)
+            {
+                return;
+            }
+
+            if (FriendSaveData.Assign(state.Values, (abstractCreature.SaveDataKey, key), value))
+            {
+                state.Write();
+            }
+        }
+
+        internal void ClearFriendData()
+        {
+            if (FriendSaveData.IsReadOnly || _states.For(abstractCreature) is not { } state)
+            {
+                return;
+            }
+
+            string creature = abstractCreature.SaveDataKey;
+
+            if (state.Values.Keys.Where(entry => entry.Creature == creature).ToList() is { Count: > 0 } entries)
+            {
+                entries.ForEach(entry => state.Values.Remove(entry));
+                state.Write();
+            }
+        }
     }
 }

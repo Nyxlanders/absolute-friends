@@ -14,6 +14,10 @@ internal static class RelationshipRules
 
         // Self-owned objects participate in ownership checks without belonging to a creature.
         OwnerUtils.RegisterSelfOwnershipRule(IsGreenNeuronSelfOwned);
+
+        // A sharing rule decides whether Friend Sharing may pass one slugcat's friendships to another, and every rule must agree.
+        // The Meadow addon uses one to share only between teammates in Team Battle. This example needs none:
+        // FriendUtils.RegisterSharingRule((abstractSlugcat, sharedSlugcat) => true);
     }
 
     internal static void Unregister()

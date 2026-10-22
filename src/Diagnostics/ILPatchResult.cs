@@ -22,7 +22,7 @@ internal readonly struct ILPatchSite(int index, int inserted, string anchor)
     public bool Rewritten => Inserted == 0;
 }
 
-internal sealed class ILPatchResult(string fullName, ILPatchStatus status, int shift, int unreachable, List<ILPatchSite> sites, List<string> details)
+internal class ILPatchResult(string fullName, ILPatchStatus status, int shift, int unreachable, List<ILPatchSite> sites, List<string> details)
 {
     public bool IsHealthy => unreachable == 0 && status is ILPatchStatus.Exact or ILPatchStatus.Shifted or ILPatchStatus.Untracked;
 

@@ -5,7 +5,7 @@ namespace AbsoluteFriends.Options;
 
 public abstract partial class MenuBuilder
 {
-    private sealed class Section(string?[] names, int index, float top, Func<bool>? gate)
+    private class Section(string?[] names, int index, float top, Func<bool>? gate)
     {
         private const float Ease = 0.3f;
 
@@ -95,7 +95,7 @@ public abstract partial class MenuBuilder
 
             bool hasName = false;
 
-            foreach (string? name in names)
+            foreach (var name in names)
             {
                 if (name == null)
                 {

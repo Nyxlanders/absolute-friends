@@ -10,7 +10,7 @@ namespace AbsoluteFriendsExample;
 [BepInDependency(AbsoluteFriends.Core.Plugin.GUID)]
 // The Manager plugin is needed for its tab API. It is not listed in AddonDependencies, because the example's other options work with the Manager addon off.
 [BepInDependency(AbsoluteFriends.Manager.Plugin.GUID)]
-public sealed class Plugin : AddonPlugin
+public class Plugin : AddonPlugin
 {
     public const string GUID = "pjhgamma.absolutefriends.example";
 
@@ -42,6 +42,7 @@ public sealed class Plugin : AddonPlugin
         RelationshipRules.Register();
         TrackingRules.Register();
         ManagerTab.Register();
+        HunterSync.Register();
 
         Logger.LogInfo($"Hunter Long Legs example enabled with {AddonContext.OptionCount} options");
     }
@@ -52,6 +53,7 @@ public sealed class Plugin : AddonPlugin
         RelationshipRules.Unregister();
         TrackingRules.Unregister();
         ManagerTab.Unregister();
+        HunterSync.Unregister();
 
         Logger.LogInfo("Hunter Long Legs example disabled");
     }

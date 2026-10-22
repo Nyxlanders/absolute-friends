@@ -7,9 +7,9 @@ using UnityEngine;
 
 namespace AbsoluteFriends.Manager;
 
-internal sealed partial class FriendManagerDialog
+internal partial class FriendManagerDialog
 {
-    private sealed partial class DetailsTab
+    private partial class DetailsTab
     {
         private const float ButtonSize = 24f;
 
@@ -31,8 +31,6 @@ internal sealed partial class FriendManagerDialog
 
         private readonly NicknameTextBox _nickname;
 
-        private readonly OpSimpleImageButton _save;
-
         private readonly OpSimpleImageButton _clear;
 
         private readonly OpCheckBox _tracking;
@@ -41,7 +39,7 @@ internal sealed partial class FriendManagerDialog
 
         private readonly OpLabel _relationshipsTitle;
 
-        private readonly AutoScrollBox _relationships;
+        private readonly ScrollArea _relationships;
 
         private readonly OpLabel _noRelationships;
 
@@ -69,15 +67,11 @@ internal sealed partial class FriendManagerDialog
                 anchor = new(0.5f, 0.5f)
             };
             _name = new(new Vector2(NameX, nameY), new Vector2(width - NameX, ButtonSize), string.Empty, FLabelAlignment.Left);
-            _nickname = new(new Configurable<string>(string.Empty, new ConfigurableInfo("Edit this friend's nickname.")), new Vector2(NameX, nameY), width - NameX - ButtonSize * 2f - 12f)
+            _nickname = new(new Configurable<string>(string.Empty, new ConfigurableInfo("Edit this friend's nickname.")), new Vector2(NameX, nameY), width - NameX - ButtonSize - 6f, TypeNickname)
             {
                 allowSpace = true,
                 maxLength = FriendNicknames.MaxNicknameLength,
                 description = Translation.Of("Edit this friend's nickname.")
-            };
-            _save = new(new Vector2(width - ButtonSize * 2f - 6f, nameY), new Vector2(ButtonSize, ButtonSize), "Menu_Symbol_CheckBox")
-            {
-                description = Translation.Of("Save this nickname.")
             };
             _clear = new(new Vector2(width - ButtonSize, nameY), new Vector2(ButtonSize, ButtonSize), "Menu_Symbol_Clear_All")
             {
@@ -101,12 +95,11 @@ internal sealed partial class FriendManagerDialog
                 description = Translation.Of("Hold to forget this friend. Clears its like toward every slugcat and its nickname, and stops tracking it.")
             };
 
-            _save.OnClick += delegate { SetNickname(_nickname.value); };
             _clear.OnClick += delegate { SetNickname(null); };
             _tracking.OnValueUpdate += delegate { SetTracked(_tracking.value == "true"); };
             _forget.Done += Forget;
 
-            foreach (UIelement element in (UIelement[])[_icon, _name, _nickname, _save, _clear, _tracking, _trackingLabel, _relationshipsTitle, _relationships, _noRelationships, _divider, _forget])
+            foreach (var element in (UIelement[])[_icon, _name, _nickname, _clear, _tracking, _trackingLabel, _relationshipsTitle, _relationships, _noRelationships, _divider, _forget])
             {
                 tab.Add(element);
             }
@@ -127,13 +120,13 @@ internal sealed partial class FriendManagerDialog
         {
             AbstractCreature? friend = _tab.Friend;
             bool named = friend is { IsPlayer: false };
-            bool forgettable = friend is { IsPlayer: false, HasFriendTracker: true };
+            bool forgettable = friend is { IsForgettable: true };
             (string symbol, Color color) = friend?.Icon ?? (string.Empty, Color.white);
 
             SetShown(_icon, friend != null && Futile.atlasManager.DoesContainElementWithName(symbol));
             SetShown(_name, friend is { IsPlayer: true });
 
-            SetShown(named, _nickname, _save, _clear);
+            SetShown(named, _nickname, _clear);
             SetShown(friend != null, _tracking, _trackingLabel, _relationshipsTitle, _relationships);
             SetShown(forgettable, _divider, _forget);
 
@@ -145,7 +138,9 @@ internal sealed partial class FriendManagerDialog
             }
 
             bool tracked = friend.IsTracked;
-            bool blocked = !friend.IsPlayer && !tracked && !friend.IsExcluded;
+            bool locked = friend.IsTrackingLocked;
+            bool blocked = !friend.IsPlayer && !locked && !tracked && !friend.IsExcluded;
+            bool readOnly = FriendManager.IsReadOnly;
 
             if (!_icon.Hidden)
             {
@@ -157,13 +152,26 @@ internal sealed partial class FriendManagerDialog
             _name.text = friend.PlayerName;
             _name.color = friend.ShortcutColor;
             _nickname.colorText = friend.ShortcutColor;
+
+            foreach (var element in (UIfocusable[])[_nickname, _clear])
+            {
+                element.greyedOut = readOnly;
+            }
+
+            if (named && !_nickname._KeyboardOn && _nickname.value != friend.FriendName)
+            {
+                _nickname.value = friend.FriendName;
+            }
+
             _tracking.ForceValue(tracked ? "true" : "false");
-            _tracking.greyedOut = friend.IsPlayer || blocked;
+            _tracking.greyedOut = friend.IsPlayer || locked || blocked;
             _tracking.description = Translation.Of(friend.IsPlayer
                 ? "Players are always tracked."
-                : blocked
-                    ? "Another addon keeps this friend untracked."
-                    : tracked ? "Stop tracking this friend. Friendship is kept." : "Track this friend.");
+                : locked
+                    ? "Only the host can change this."
+                    : blocked
+                        ? "Another addon keeps this friend untracked."
+                        : tracked ? "Stop tracking this friend. Friendship is kept." : "Track this friend.");
         }
 
         private void RefreshRelationships(AbstractCreature? friend)
@@ -226,6 +234,17 @@ internal sealed partial class FriendManagerDialog
             _tab.RefreshManager();
         }
 
+        private void TypeNickname(string value)
+        {
+            if (_tab.Friend is not { IsPlayer: false } friend || value == friend.FriendName)
+            {
+                return;
+            }
+
+            friend.SetNickname(value == friend.DefaultName ? null : value);
+            _tab.RefreshManager();
+        }
+
         private void Forget()
         {
             if (_tab.Friend is not { IsPlayer: false } friend)
@@ -240,7 +259,7 @@ internal sealed partial class FriendManagerDialog
 
     }
 
-    private sealed class NicknameTextBox(ConfigurableBase configurable, Vector2 position, float width) : OpTextBox(configurable, position, width)
+    private class NicknameTextBox(ConfigurableBase configurable, Vector2 position, float width, Action<string> typed) : OpTextBox(configurable, position, width)
     {
         public override bool CurrentlyFocusableNonMouse => false;
 
@@ -260,6 +279,11 @@ internal sealed partial class FriendManagerDialog
                 {
                     _value = value;
                     Change();
+
+                    if (_KeyboardOn)
+                    {
+                        typed(value);
+                    }
                 }
             }
         }

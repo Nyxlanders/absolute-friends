@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace AbsoluteFriends.Manager;
 
-internal sealed partial class FriendManagerDialog : Dialog
+internal partial class FriendManagerDialog : Dialog
 {
     private const float RowSpacing = 30f;
 
@@ -178,6 +178,14 @@ internal sealed partial class FriendManagerDialog : Dialog
         ? held
         : null;
 
+    public override void RawUpdate(float dt)
+    {
+        using (InputBlocker.Allow())
+        {
+            base.RawUpdate(dt);
+        }
+    }
+
     public override void Update()
     {
         floatScrollWheel += _pendingScroll;
@@ -271,10 +279,6 @@ internal sealed partial class FriendManagerDialog : Dialog
         base.ShutDownProcess();
     }
 
-    private OpScrollBox? WheelTarget() => ContentElements()
-        .OfType<OpScrollBox>()
-        .FirstOrDefault(scrollBox => !scrollBox.IsInactive && scrollBox.MouseOver) ?? _scrollBox;
-
     internal void CollectScroll()
     {
         if (_tickFrame != Time.frameCount && manager.menuesMouseMode)
@@ -303,6 +307,10 @@ internal sealed partial class FriendManagerDialog : Dialog
 
     internal UIelementWrapper? WrapperOf(UIelement element) => _wrapper.wrappers.TryGetValue(element, out UIelementWrapper wrapper) ? wrapper : null;
 
+    private OpScrollBox? WheelTarget() => ContentElements()
+        .OfType<OpScrollBox>()
+        .FirstOrDefault(scrollBox => !scrollBox.IsInactive && scrollBox.MouseOver) ?? _scrollBox;
+
     private static void SetShown(UIelement element, bool shown)
     {
         if (shown && element.Hidden)
@@ -318,7 +326,7 @@ internal sealed partial class FriendManagerDialog : Dialog
 
     private static void SetShown(bool shown, params UIelement[] elements)
     {
-        foreach (UIelement element in elements)
+        foreach (var element in elements)
         {
             SetShown(element, shown);
         }

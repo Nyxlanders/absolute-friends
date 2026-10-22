@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using AbsoluteFriends.Options;
+using AbsoluteFriends.Utils;
 
 namespace AbsoluteFriends.Core;
 
@@ -8,6 +9,8 @@ public static class OwnerUtils
     private static readonly ConditionalWeakTable<PhysicalObject, AbstractOwner>.CreateValueCallback _createSelfOwner = physicalObject => new(physicalObject);
 
     private static readonly List<Func<PhysicalObject, bool>> _selfOwnershipRules = [];
+
+    private static readonly List<Func<PhysicalObject, AbstractCreature?>> _remoteOwnerSources = [];
 
     private static ConditionalWeakTable<UpdatableAndDeletable, AbstractCreature> _owners = new();
 
@@ -22,6 +25,16 @@ public static class OwnerUtils
     }
 
     public static void UnregisterSelfOwnershipRule(Func<PhysicalObject, bool> rule) => _selfOwnershipRules.Remove(rule);
+
+    public static void RegisterRemoteOwnerSource(Func<PhysicalObject, AbstractCreature?> source)
+    {
+        if (source != null && !_remoteOwnerSources.Contains(source))
+        {
+            _remoteOwnerSources.Add(source);
+        }
+    }
+
+    public static void UnregisterRemoteOwnerSource(Func<PhysicalObject, AbstractCreature?> source) => _remoteOwnerSources.Remove(source);
 
     internal static void ClearOwners()
     {
@@ -103,6 +116,17 @@ public static class OwnerUtils
                     return null;
                 }
 
+                if (_remoteOwnerSources.Count > 0 && source is PhysicalObject { HasAuthority: false } remoteObject)
+                {
+                    foreach (var ownerSource in _remoteOwnerSources)
+                    {
+                        if (ownerSource(remoteObject) is { } remoteOwner)
+                        {
+                            return remoteOwner;
+                        }
+                    }
+                }
+
                 if (_owners.TryGetValue(source, out AbstractCreature abstractCreature))
                 {
                     return abstractCreature;
@@ -138,6 +162,8 @@ public static class OwnerUtils
                 return null;
             }
         }
+
+        public AbstractCreature? AssignedOwner => source != null && _owners.TryGetValue(source, out AbstractCreature owner) ? owner : null;
 
         public AbstractCreature? ExternalOwner => source.Owner is { } owner && !ReferenceEquals(owner.RealizedOwner, source) ? owner : null;
 

@@ -4,15 +4,15 @@ using UnityEngine;
 
 namespace AbsoluteFriends.Manager;
 
-internal sealed partial class FriendManagerDialog
+internal partial class FriendManagerDialog
 {
-    private sealed class RowButton(Vector2 pos, Vector2 size) : UIfocusable(pos, size)
+    private class RowButton(Vector2 pos, Vector2 size) : UIfocusable(pos, size)
     {
         internal event Action? Clicked;
 
-        internal bool IsInView { get; set; }
-
         public override bool CurrentlyFocusableNonMouse => IsInView;
+
+        internal bool IsInView { get; set; }
 
         public override void Update()
         {
@@ -44,7 +44,7 @@ internal sealed partial class FriendManagerDialog
         }
     }
 
-    private sealed class RowWrapper(MenuTabWrapper tabWrapper, RowButton button, OpScrollBox scrollBox) : UIelementWrapper(tabWrapper, button)
+    private class RowWrapper(MenuTabWrapper tabWrapper, RowButton button, OpScrollBox scrollBox) : UIelementWrapper(tabWrapper, button)
     {
         public override void Update()
         {

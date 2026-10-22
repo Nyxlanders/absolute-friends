@@ -30,11 +30,13 @@ public class Plugin : AddonPlugin
     {
         FriendTracking.Register();
         FriendNicknames.Register();
+        InputBlocker.Register();
     }
 
     protected override void Disable()
     {
         FriendTracking.Unregister();
         FriendNicknames.Unregister();
+        InputBlocker.Unregister();
     }
 }

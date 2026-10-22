@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace AbsoluteFriends.Manager;
 
-public sealed class FriendTab
+public class FriendTab
 {
     private readonly FriendManagerDialog _dialog;
 
@@ -128,7 +128,7 @@ public sealed class FriendTab
 
         if (active)
         {
-            foreach (UIelement element in _hiddenByTab)
+            foreach (var element in _hiddenByTab)
             {
                 element.Show();
                 FriendManagerDialog.Snap(element);
@@ -139,7 +139,7 @@ public sealed class FriendTab
         }
         else
         {
-            foreach (UIelement element in _elements.Where(element => !element.Hidden))
+            foreach (var element in _elements.Where(element => !element.Hidden))
             {
                 element.Hide();
                 _hiddenByTab.Add(element);

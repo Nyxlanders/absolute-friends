@@ -65,7 +65,7 @@ internal readonly struct Rule(RuleMode mode, float value, string? relation = nul
     private static float Clamp(float value) => Math.Max(-1f, Math.Min(1f, value));
 }
 
-internal sealed class Rules
+internal class Rules
 {
     internal const string All = "*";
 
@@ -92,11 +92,11 @@ internal sealed class Rules
             return null;
         }
 
-        foreach (string candidateSubject in Candidates(key.Subject))
+        foreach (var candidateSubject in Candidates(key.Subject))
         {
-            foreach (string candidateRegion in Candidates(key.Region))
+            foreach (var candidateRegion in Candidates(key.Region))
             {
-                foreach (string candidateTarget in Candidates(key.Target))
+                foreach (var candidateTarget in Candidates(key.Target))
                 {
                     if (Exact(new(candidateSubject, candidateRegion, candidateTarget, key.Stat)) is { } rule)
                     {
@@ -129,15 +129,6 @@ internal sealed class Rules
 
     internal IEnumerable<(RuleKey Key, Rule Rule)> Matching(Func<RuleKey, bool> match) => _rules.Where(pair => match(pair.Key)).Select(pair => (pair.Key, pair.Value));
 
-    private void Index()
-    {
-        HasLikeRules = _rules.Keys.Any(entry => entry.Stat is Stat.Like or Stat.TempLike or Stat.Know);
-        HasReputationRules = _rules.Keys.Any(entry => entry.Stat == Stat.Reputation);
-        HasRelationshipRules = _rules.Keys.Any(entry => entry.Stat == Stat.Relationship);
-        _targets.Clear();
-        _targets.UnionWith(_rules.Keys.Select(entry => entry.Target));
-    }
-
     internal string Serialize() => Encode(string.Join("\n", _rules
         .OrderBy(pair => pair.Key.Stat)
         .ThenBy(pair => pair.Key.Subject, StringComparer.Ordinal)
@@ -151,7 +142,7 @@ internal sealed class Rules
 
         try
         {
-            foreach (string line in Decode(content).Split('\n'))
+            foreach (var line in Decode(content).Split('\n'))
             {
                 string[] fields = line.Split('\t');
 
@@ -180,6 +171,15 @@ internal sealed class Rules
         }
 
         return rules;
+    }
+
+    private void Index()
+    {
+        HasLikeRules = _rules.Keys.Any(entry => entry.Stat is Stat.Like or Stat.TempLike or Stat.Know);
+        HasReputationRules = _rules.Keys.Any(entry => entry.Stat == Stat.Reputation);
+        HasRelationshipRules = _rules.Keys.Any(entry => entry.Stat == Stat.Relationship);
+        _targets.Clear();
+        _targets.UnionWith(_rules.Keys.Select(entry => entry.Target));
     }
 
     private static string[] Fields(RuleKey key, Rule rule) =>

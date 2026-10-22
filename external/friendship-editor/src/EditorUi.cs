@@ -12,8 +12,6 @@ internal static class EditorUi
 
     internal const string Inherit = "Inherit";
 
-    private const float SliderOffset = 3f;
-
     internal const float ListRowHeight = 30f;
 
     internal const float ListNameWidth = 220f;
@@ -30,6 +28,8 @@ internal static class EditorUi
 
     internal const float ListPercentWidth = 40f;
 
+    private const float SliderOffset = 3f;
+
     internal static OpLabel Label(Action<UIelement> add, string text, Vector2 position, float width, FLabelAlignment alignment = FLabelAlignment.Left, bool grey = false)
     {
         OpLabel label = new(position, new Vector2(width, RowHeight), text, alignment);
@@ -44,10 +44,10 @@ internal static class EditorUi
         return label;
     }
 
-    internal static ScrollList List(Action<UIelement> add, float width, string title, float y)
+    internal static ScrollArea List(Action<UIelement> add, float width, string title, float y)
     {
         float height = y - 6f;
-        ScrollList list = new(Vector2.zero, new Vector2(width + MenuBuilder.Padding, height));
+        ScrollArea list = new(Vector2.zero, new Vector2(width + MenuBuilder.Padding, height));
 
         add(new OpLabel(new Vector2(0f, height + 4f), new Vector2(width, 30f), title, FLabelAlignment.Center, true));
         add(list);
@@ -107,12 +107,12 @@ internal static class EditorUi
     {
         List<UIelement> list = [.. elements];
 
-        foreach (UIelement element in list.Where(element => element is OpSlider))
+        foreach (var element in list.Where(element => element is OpSlider))
         {
             element.MoveToFront();
         }
 
-        foreach (UIelement element in list.Where(element => element is UIfocusable { held: true }))
+        foreach (var element in list.Where(element => element is UIfocusable { held: true }))
         {
             element.MoveToFront();
         }

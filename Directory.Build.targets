@@ -20,4 +20,12 @@
     <Copy SourceFiles="@(Assets)" DestinationFiles="$(ArtifactsPath)%(RecursiveDir)%(Filename)%(Extension)" SkipUnchangedFiles="true" />
   </Target>
 
+  <Target Name="StageExternalLibraries" AfterTargets="StageArtifacts">
+    <ItemGroup>
+      <ExternalLibrary Include="$(MSBuildThisFileDirectory)external\*\lib\$(TargetFileName)" />
+    </ItemGroup>
+
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="%(ExternalLibrary.RootDir)%(ExternalLibrary.Directory)" SkipUnchangedFiles="true" Condition="'@(ExternalLibrary)' != ''" />
+  </Target>
+
 </Project>

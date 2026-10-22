@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using AbsoluteFriends.Diagnostics;
 using AbsoluteFriends.Hooks;
+using AbsoluteFriends.Utils;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using UnityEngine;
@@ -188,7 +189,7 @@ internal class VoidSeaHooks : BaseHooks
             return;
         }
 
-        float velocityFactor = Mathf.Lerp(0.95f, 1f, self.room.game.cameras[0].voidSeaGoldFilter);
+        float velocityFactor = Mathf.Lerp(0.95f, 1f, RainWorldUtils.MainCamera(self.room.game)?.voidSeaGoldFilter ?? 0f);
         VoidSeaState state = self.State;
         Creature[] companions = self.GatherCompanions();
         HashSet<Creature> riders = [];
@@ -223,7 +224,7 @@ internal class VoidSeaHooks : BaseHooks
         VoidSeaUtils.AttachThreads(self, state, companions);
     }
 
-    private sealed class RestrictionState(Creature creature)
+    private class RestrictionState(Creature creature)
     {
         private readonly float[] _ranges = [.. creature.bodyChunks.Select(chunk => chunk.restrictInRoomRange)];
 
@@ -307,7 +308,7 @@ internal class WatcherVoidSeaHooks : WatcherHooks
             i => i.MatchIsinst<Player>(),
             i => i.MatchBrtrue(out _),
             i => i.MatchLdarg(0),
-            i => i.MatchLdfld<WarpPoint>(nameof(WarpPoint.canWarpToVoidWeaverEnding))
+            i => i.MatchLdfld<WarpPoint>("canWarpToVoidWeaverEnding")
         ))
         {
             c.Emit(OpCodes.Ldloc, physicalObject);

@@ -3,7 +3,7 @@ using AbsoluteFriends.Diagnostics;
 
 namespace AbsoluteFriends.Hooks;
 
-internal sealed class HookBinding(BaseHooks owner, string methodName, EventInfo eventInfo, Delegate handler, HookTestAttribute? test)
+internal class HookBinding(BaseHooks owner, string methodName, EventInfo eventInfo, Delegate handler, HookTestAttribute? test)
 {
     public readonly string MethodName = methodName;
 

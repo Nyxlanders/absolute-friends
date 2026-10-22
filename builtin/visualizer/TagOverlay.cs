@@ -140,7 +140,7 @@ internal class TagOverlay : HudOverlay
 
         foreach (var source in room.TaggedObjects)
         {
-            FriendshipType type = source.FriendshipOfPlayer;
+            FriendshipType type = source.FriendshipOfLocalPlayer;
             AbstractCreature? owner = source.ExternalOwner;
 
             if (type == FriendshipType.None && owner == null)
@@ -149,7 +149,7 @@ internal class TagOverlay : HudOverlay
             }
 
             RelationshipAppearance friend = type == FriendshipType.None ? default : Relationships.AppearanceOf(source, type, false);
-            RelationshipAppearance? ownerAppearance = owner == null ? null : Relationships.AppearanceOf(owner, owner.FriendshipOfPlayer, true);
+            RelationshipAppearance? ownerAppearance = owner == null ? null : Relationships.AppearanceOf(owner, owner.FriendshipOfLocalPlayer, true);
 
             _subjects[source] = new(type, friend, ownerAppearance);
         }

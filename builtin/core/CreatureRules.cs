@@ -14,13 +14,13 @@ internal enum CreatureRule
 
 internal static class CreatureRules
 {
+    internal static Action? HandleChanged;
+
     private static readonly Dictionary<string, Configurable<string>> _options = new(StringComparer.Ordinal);
 
     private static readonly Dictionary<string, string> _changes = new(StringComparer.Ordinal);
 
     private static Addon? _addon;
-
-    internal static Action? HandleChanged;
 
     internal static IEnumerable<KeyValuePair<string, Configurable<string>>> Options => _options.OrderBy(pair => pair.Key, StringComparer.Ordinal);
 
@@ -42,7 +42,7 @@ internal static class CreatureRules
             return;
         }
 
-        foreach (string name in CreatureTemplate.Type.values.entries)
+        foreach (var name in CreatureTemplate.Type.values.entries)
         {
             if (name == CreatureTemplate.Type.Slugcat.value
                 || name == MoreSlugcats.MoreSlugcatsEnums.CreatureTemplateType.SlugNPC?.value

@@ -4,7 +4,7 @@ using Mono.Cecil.Cil;
 
 namespace AbsoluteFriends.Diagnostics;
 
-internal sealed class ILSnapshot
+internal class ILSnapshot
 {
     private const int AnchorWindow = 3;
 

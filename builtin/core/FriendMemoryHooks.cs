@@ -19,26 +19,27 @@ internal class FriendMemoryHooks : BaseHooks
             yield break;
         }
 
-        int[] playerNumbers = [.. FriendUtils.KnownSlugcats
-            .Select(abstractSlugcat => abstractSlugcat.state)
-            .OfType<PlayerState>()
-            .Select(playerState => playerState.playerNumber)
-            .Distinct()
-        ];
+        AbstractCreature[] slugcats = [.. FriendUtils.KnownSlugcats.Where(abstractSlugcat => abstractSlugcat.state is PlayerState)];
 
-        if (!playerNumbers.Contains(playerNumber))
+        if (slugcats.FirstOrDefault(abstractSlugcat => ((PlayerState)abstractSlugcat.state).playerNumber == playerNumber) is not { } subject)
         {
             yield break;
         }
 
-        foreach (int sharedPlayerNumber in playerNumbers)
+        HashSet<int> shared = [playerNumber];
+
+        foreach (var abstractSlugcat in slugcats)
         {
-            if (sharedPlayerNumber != playerNumber)
+            int sharedPlayerNumber = ((PlayerState)abstractSlugcat.state).playerNumber;
+
+            if (shared.Add(sharedPlayerNumber) && FriendUtils.CanShare(subject, abstractSlugcat))
             {
                 yield return sharedPlayerNumber;
             }
         }
     }
+
+    private static AbstractCreature? KnownSlugcat(EntityID id) => FriendUtils.HasSharingRules ? FriendUtils.KnownSlugcats.FirstOrDefault(abstractSlugcat => abstractSlugcat.ID == id) : null;
 
     private static IEnumerable<SocialMemory.Relationship> SharedRelationships(SocialMemory.Relationship relationship)
     {
@@ -51,9 +52,11 @@ internal class FriendMemoryHooks : BaseHooks
             yield break;
         }
 
+        AbstractCreature? subject = KnownSlugcat(relationship.subjectID);
+
         foreach (var abstractSlugcat in FriendUtils.KnownSlugcats)
         {
-            if (abstractSlugcat.ID != relationship.subjectID)
+            if (abstractSlugcat.ID != relationship.subjectID && (subject == null || FriendUtils.CanShare(subject, abstractSlugcat)))
             {
                 yield return socialMemory.GetOrInitiateRelationship(abstractSlugcat.ID);
             }
@@ -67,9 +70,15 @@ internal class FriendMemoryHooks : BaseHooks
             return value;
         }
 
+        AbstractCreature? subject = KnownSlugcat(subjectID);
+
         foreach (var abstractSlugcat in FriendUtils.KnownSlugcats)
         {
-            if (abstractSlugcat.ID != subjectID && self.GetRelationship(abstractSlugcat.ID) is { } relationship)
+            if (
+                abstractSlugcat.ID != subjectID
+                && (subject == null || FriendUtils.CanShare(subject, abstractSlugcat))
+                && self.GetRelationship(abstractSlugcat.ID) is { } relationship
+            )
             {
                 float shared = field switch
                 {
@@ -100,7 +109,7 @@ internal class FriendMemoryHooks : BaseHooks
     {
         orig(self, communityID, region, playerNumber, influence, interRegionBleed, interCommunityBleed);
 
-        foreach (int sharedPlayerNumber in SharedPlayerNumbers(self, playerNumber))
+        foreach (var sharedPlayerNumber in SharedPlayerNumbers(self, playerNumber))
         {
             orig(self, communityID, region, sharedPlayerNumber, influence, interRegionBleed, interCommunityBleed);
         }
@@ -111,7 +120,7 @@ internal class FriendMemoryHooks : BaseHooks
     {
         float reputation = orig(self, communityID, region, playerNumber);
 
-        foreach (int sharedPlayerNumber in SharedPlayerNumbers(self, playerNumber))
+        foreach (var sharedPlayerNumber in SharedPlayerNumbers(self, playerNumber))
         {
             reputation = Mathf.Max(reputation, orig(self, communityID, region, sharedPlayerNumber));
         }
@@ -124,7 +133,7 @@ internal class FriendMemoryHooks : BaseHooks
     {
         orig(self, communityID, region, playerNumber, like);
 
-        foreach (int sharedPlayerNumber in SharedPlayerNumbers(self, playerNumber))
+        foreach (var sharedPlayerNumber in SharedPlayerNumbers(self, playerNumber))
         {
             orig(self, communityID, region, sharedPlayerNumber, like);
         }

@@ -6,9 +6,9 @@ using UnityEngine;
 
 namespace AbsoluteFriends.Visualizer;
 
-internal sealed partial class FriendMeter
+internal partial class FriendMeter
 {
-    private sealed class MeterIcon
+    private class MeterIcon
     {
         private const string FallbackSymbol = "Kill_Slugcat";
 

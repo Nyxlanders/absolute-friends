@@ -46,6 +46,39 @@ public static partial class FriendUtils
             && tracker.HasSlugcatFriend
             && tracker.friendRel is { like: > FriendLikeThreshold, tempLike: > FriendLikeThreshold };
 
+        private bool? SlugcatFriendshipVerdict
+        {
+            get
+            {
+                if (_friendshipRules.Count == 0)
+                {
+                    return null;
+                }
+
+                bool unresolved = false;
+                bool? ruled = null;
+
+                foreach (var abstractSlugcat in KnownSlugcats)
+                {
+                    if (source.GetFriendshipVerdict(abstractSlugcat) is not { } verdict)
+                    {
+                        unresolved = true;
+
+                        continue;
+                    }
+
+                    if (verdict)
+                    {
+                        return true;
+                    }
+
+                    ruled = false;
+                }
+
+                return unresolved ? null : ruled;
+            }
+        }
+
         public bool Like(AbstractCreature? target)
         {
             if (source?.state?.socialMemory is not { } socialMemory || target == null)
@@ -107,36 +140,6 @@ public static partial class FriendUtils
             return granted;
         }
 
-        private bool? GetSlugcatFriendshipVerdict()
-        {
-            if (_friendshipRules.Count == 0)
-            {
-                return null;
-            }
-
-            bool unresolved = false;
-            bool? ruled = null;
-
-            foreach (var abstractSlugcat in KnownSlugcats)
-            {
-                if (source.GetFriendshipVerdict(abstractSlugcat) is not { } verdict)
-                {
-                    unresolved = true;
-
-                    continue;
-                }
-
-                if (verdict)
-                {
-                    return true;
-                }
-
-                ruled = false;
-            }
-
-            return unresolved ? null : ruled;
-        }
-
         private bool? GetCreatureFriendship(AbstractCreature abstractSlugcat, bool allowNeutral = true) =>
             source.GetCreatureFriendshipType(abstractSlugcat, allowNeutral) is { } type ? type != FriendshipType.None : null;
 
@@ -166,7 +169,7 @@ public static partial class FriendUtils
 
             foreach (var sharedSlugcat in KnownSlugcats)
             {
-                if (sharedSlugcat == abstractSlugcat)
+                if (sharedSlugcat == abstractSlugcat || !CanShare(abstractSlugcat, sharedSlugcat))
                 {
                     continue;
                 }

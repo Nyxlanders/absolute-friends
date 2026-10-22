@@ -39,7 +39,6 @@ Saves the entered profile name.|입력한 이름으로 프로필을 저장합니
 Cancels editing the profile name.|프로필 이름 편집을 취소합니다.
 
 Selects this profile.|이 프로필을 선택합니다.
-Copies this profile under a generated name.|이 프로필을 복사합니다.
 Edits this profile's name.|이 프로필의 이름을 편집합니다.
 Addons enabled: <PLACEHOLDER>|활성화된 애드온: <PLACEHOLDER>
 Shows or hides this profile's details.|이 프로필의 상세 정보를 표시하거나 숨깁니다.
@@ -51,12 +50,10 @@ Hold to remove this profile.|길게 눌러 이 프로필을 제거합니다.
 
 Profile created.|프로필이 생성되었습니다.
 Profile loaded.|프로필을 불러왔습니다.
-Profile copied.|프로필이 복사되었습니다.
 Profile renamed.|프로필 이름이 변경되었습니다.
 Profile removed.|프로필이 제거되었습니다.
 Could not create profile.|프로필을 만들 수 없습니다.
 Could not update profile.|프로필을 업데이트할 수 없습니다.
-Could not copy profile.|프로필을 복사할 수 없습니다.
 Could not rename profile.|프로필 이름을 변경할 수 없습니다.
 Could not remove profile.|프로필을 제거할 수 없습니다.
 <PLACEHOLDER> Enabled: <PLACEHOLDER> of <PLACEHOLDER> addons and <PLACEHOLDER> of <PLACEHOLDER> options.|<PLACEHOLDER> 활성화: 애드온 <PLACEHOLDER>/<PLACEHOLDER>개, 옵션 <PLACEHOLDER>/<PLACEHOLDER>개.
@@ -146,7 +143,7 @@ Absolute Friends: Manager|절대적 친구: 관리자
 Lists friends during gameplay, shows their relationships, and manages tracking and nicknames.|게임 도중 친구 목록과 관계를 보여주고 추적과 별명을 관리합니다.
 
 Friend Manager|친구 관리자
-Friend Manager Shortcut|친구 관리자 단축키
+Manager Key|관리자 키
 Opens the friend manager during gameplay or while paused.|게임 도중이나 일시정지한 동안 친구 관리자를 엽니다.
 Track New Friends|새 친구 추적
 Tracks newly tamed friends. When off, new friends start untracked.|새로 길들인 친구를 추적합니다. 끄면 새 친구는 추적하지 않는 상태로 시작합니다.
@@ -160,15 +157,23 @@ Track this friend.|이 친구를 추적합니다.
 Stop tracking this friend. Friendship is kept.|이 친구의 추적을 끕니다. 친구 관계는 유지됩니다.
 Players are always tracked.|플레이어는 항상 추적됩니다.
 Another addon keeps this friend untracked.|다른 애드온이 이 친구를 추적하지 않게 합니다.
+Only the host can change this.|호스트만 바꿀 수 있습니다.
 Track this friend|이 친구 추적
 Edit this friend's nickname.|이 친구의 별명을 편집합니다.
-Save this nickname.|이 별명을 저장합니다.
 Clear this nickname.|이 별명을 지웁니다.
 Forget Friend|친구 잊기
 Hold to forget this friend. Clears its like toward every slugcat and its nickname, and stops tracking it.|길게 눌러 이 친구를 잊습니다. 모든 슬러그캣에 대한 호감과 별명을 지우고 추적을 해제합니다.
 Not friends|친구 아님
 Friend Relationships|친구 관계
 No other friends|다른 친구 없음
+
+Absolute Friends: Meadow|절대적 친구: 메도우
+Lets Absolute Friends recognize other players and their creatures in Rain Meadow.|레인 메도우에서 다른 플레이어와 그들의 생물을 인식하게 합니다.
+
+Doesn't work in Rain Meadow.|레인 메도우에서는 작동하지 않습니다.
+Some of these don't work in Rain Meadow.|이 중 일부는 레인 메도우에서 작동하지 않습니다.
+Isn't synced in Rain Meadow.|레인 메도우에서는 동기화되지 않습니다.
+Some of these aren't synced in Rain Meadow.|이 중 일부는 레인 메도우에서 동기화되지 않습니다.
 
 Absolute Friends: Visualizer|절대적 친구: 시각화
 Shows friends and owners on screen.|친구와 소유자를 화면에 표시합니다.
@@ -423,6 +428,12 @@ Shelters and karma gates forcefully activate, ignoring non-player friends.|피�
 Shelters, karma gates, and warp points forcefully activate, ignoring non-player friends.|피난처, 카르마 게이트, 워프 포인트가 플레이어가 아닌 친구를 무시하고 강제로 작동합니다.
 Sets how much longer (in seconds) the player must go without control input for shelters and karma gates to forcefully activate, ignoring non-player friends.|피난처와 카르마 게이트가 플레이어가 아닌 친구를 무시하고 강제로 작동하기까지 추가로 필요한 플레이어의 조작 미입력 시간(초)을 설정합니다.
 Sets how much longer (in seconds) the player must go without control input for shelters, karma gates, and warp points to forcefully activate, ignoring non-player friends.|피난처, 카르마 게이트, 워프 포인트가 플레이어가 아닌 친구를 무시하고 강제로 작동하기까지 추가로 필요한 플레이어의 조작 미입력 시간(초)을 설정합니다.
+Any Shelter|자유 피난처
+Players and friends can sleep in different shelters.|플레이어와 친구가 서로 다른 피난처에서 잠들 수 있습니다.
+Perseverance|인내
+As on Jolly Co-op's Easy, dead players neither block shelters and gates nor end the game.|졸리 협동의 쉬움 난이도처럼 죽은 플레이어가 피난처와 게이트를 막거나 게임을 끝내지 않습니다.
+Echo|메아리
+Echoes do not put tracked friends to sleep or send them back to their dens.|메아리가 추적되는 친구를 잠재우거나 굴로 돌려보내지 않습니다.
 Guardian|가디언
 Guardians do not target tracked friends or move them with telekinesis when the players meet the Karma requirement to pass.|플레이어가 통과에 필요한 카르마 조건을 충족하면 가디언은 추적되는 친구를 노리거나 염력으로 움직이지 않습니다.
 Void Sea|공허 바다

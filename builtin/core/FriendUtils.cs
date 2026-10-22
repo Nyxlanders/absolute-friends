@@ -12,6 +12,8 @@ public static partial class FriendUtils
 
     private static readonly List<Func<AbstractCreature, AbstractCreature, bool?>> _friendshipRules = [];
 
+    private static readonly List<Func<AbstractCreature, AbstractCreature, bool>> _sharingRules = [];
+
     public static bool IsFriendSession
     {
         get
@@ -40,6 +42,8 @@ public static partial class FriendUtils
         }
     }
 
+    internal static bool HasSharingRules => _sharingRules.Count > 0;
+
     public static void RegisterFriendshipRule(Func<AbstractCreature, AbstractCreature, bool?> rule)
     {
         if (rule != null && !_friendshipRules.Contains(rule))
@@ -50,6 +54,35 @@ public static partial class FriendUtils
 
     public static void UnregisterFriendshipRule(Func<AbstractCreature, AbstractCreature, bool?> rule) => _friendshipRules.Remove(rule);
 
+    public static void RegisterSharingRule(Func<AbstractCreature, AbstractCreature, bool> rule)
+    {
+        if (rule != null && !_sharingRules.Contains(rule))
+        {
+            _sharingRules.Add(rule);
+        }
+    }
+
+    public static void UnregisterSharingRule(Func<AbstractCreature, AbstractCreature, bool> rule) => _sharingRules.Remove(rule);
+
+    internal static bool CanShare(AbstractCreature abstractSlugcat, AbstractCreature sharedSlugcat) => _sharingRules.All(rule => rule(abstractSlugcat, sharedSlugcat));
+
+    private static FriendshipType ClosestFriendship(AbstractPhysicalObject? source, IEnumerable<AbstractCreature> players)
+    {
+        FriendshipType result = FriendshipType.None;
+
+        foreach (var abstractPlayer in players)
+        {
+            FriendshipType type = source.FriendshipWith(abstractPlayer);
+
+            if (type > result)
+            {
+                result = type;
+            }
+        }
+
+        return result;
+    }
+
     extension(AbstractPhysicalObject? source)
     {
         public bool IsTracked => source is AbstractCreature { IsTracked: true };
@@ -58,7 +91,7 @@ public static partial class FriendUtils
         {
             get
             {
-                foreach (var abstractPlayer in source?.world?.game?.Players ?? [])
+                foreach (var abstractPlayer in (source?.world?.game).AllPlayers)
                 {
                     if (source.IsFriend(abstractPlayer))
                     {
@@ -70,25 +103,9 @@ public static partial class FriendUtils
             }
         }
 
-        public FriendshipType FriendshipOfPlayer
-        {
-            get
-            {
-                FriendshipType result = FriendshipType.None;
+        public FriendshipType FriendshipOfPlayer => ClosestFriendship(source, (source?.world?.game).AllPlayers);
 
-                foreach (var abstractPlayer in source?.world?.game?.Players ?? [])
-                {
-                    FriendshipType type = source.FriendshipWith(abstractPlayer);
-
-                    if (type > result)
-                    {
-                        result = type;
-                    }
-                }
-
-                return result;
-            }
-        }
+        public FriendshipType FriendshipOfLocalPlayer => ClosestFriendship(source, (source?.world?.game).AllPlayers.Where(abstractPlayer => abstractPlayer.HasAuthority));
 
         public FriendshipType FriendshipWith(AbstractPhysicalObject? target, bool direct = false)
         {
@@ -175,17 +192,6 @@ public static partial class FriendUtils
             }
         }
 
-        public IEnumerable<Creature> FriendsOf(PhysicalObject? source)
-        {
-            foreach (var creature in room.Creatures)
-            {
-                if (source.IsFriend(creature))
-                {
-                    yield return creature;
-                }
-            }
-        }
-
         public IEnumerable<Creature> PlayerFriends
         {
             get
@@ -196,6 +202,17 @@ public static partial class FriendUtils
                     {
                         yield return creature;
                     }
+                }
+            }
+        }
+
+        public IEnumerable<Creature> FriendsOf(PhysicalObject? source)
+        {
+            foreach (var creature in room.Creatures)
+            {
+                if (source.IsFriend(creature))
+                {
+                    yield return creature;
                 }
             }
         }

@@ -5,7 +5,7 @@ using Menu.Remix.MixedUI;
 
 namespace AbsoluteFriends.Options;
 
-internal sealed partial class RemixMenu : MenuBuilder
+internal partial class RemixMenu : MenuBuilder
 {
     private const int MinimumProfileSlots = 32;
 

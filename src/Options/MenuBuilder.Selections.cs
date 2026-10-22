@@ -163,7 +163,7 @@ public abstract partial class MenuBuilder
 
         BeginBlock(span);
 
-        string description = Translate(configurable.Description ?? "");
+        string description = DescriptionOf(configurable);
         float width = BlockWidth(span);
 
         if (text != null)

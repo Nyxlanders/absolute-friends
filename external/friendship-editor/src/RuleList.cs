@@ -1,12 +1,14 @@
-using System.Reflection;
+using AbsoluteFriends.Manager;
 using AbsoluteFriends.Utils;
 using Menu.Remix.MixedUI;
 using UnityEngine;
 
 namespace AbsoluteFriends.FriendshipEditor;
 
-internal sealed class RuleList
+internal class RuleList
 {
+    internal const float Height = Gap + ListHeight + Gap + EditorUi.RowHeight + NextGap;
+
     private const ushort VisibleItems = 3;
 
     private const float ListHeight = VisibleItems * 20f + 34f;
@@ -15,13 +17,11 @@ internal sealed class RuleList
 
     private const float NextGap = 40f;
 
-    internal const float Height = Gap + ListHeight + Gap + EditorUi.RowHeight + NextGap;
-
     private const string Empty = "__empty";
 
-    private static readonly FieldInfo? _listTopField = typeof(OpComboBox).GetField("_listTop", BindingFlags.Instance | BindingFlags.NonPublic);
-
     private readonly OpListBox _list;
+
+    private readonly OpSimpleButton _apply;
 
     private readonly OpSimpleButton _remove;
 
@@ -32,13 +32,13 @@ internal sealed class RuleList
     internal RuleList(EditorView view, float y, Action apply, Action<RuleKey> remove, Action<RuleKey> select)
     {
         float width = view.Tab.Size.x;
-        OpSimpleButton applyButton = new(new Vector2(0f, y), new Vector2(width, EditorUi.RowHeight), Translation.Of("Apply Rule"))
+        _apply = new(new Vector2(0f, y), new Vector2(width, EditorUi.RowHeight), Translation.Of("Apply Rule"))
         {
             description = Translation.Of("Add or update the rules shown above.")
         };
 
-        applyButton.OnClick += _ => apply();
-        view.Add(applyButton);
+        _apply.OnClick += _ => apply();
+        view.Add(_apply);
         y -= Gap + ListHeight;
         _list = new OpListBox(new Configurable<string>(Empty), new Vector2(0f, y), width, [.. Items([]).Select((item, index) => new ListItem(item.Key, item.Name, index))], VisibleItems)
         {
@@ -72,7 +72,7 @@ internal sealed class RuleList
 
     internal RuleKey? Choose(IReadOnlyCollection<RuleKey> keys, IEnumerable<RuleKey> current, bool fallback)
     {
-        foreach (RuleKey key in current)
+        foreach (var key in current)
         {
             if (keys.Contains(key))
             {
@@ -102,9 +102,11 @@ internal sealed class RuleList
         List<(RuleKey Key, string Text)> list = [.. rules];
         string shown = string.Join("\n", list.Select(rule => rule.Text));
 
+        _apply.greyedOut = FriendManager.IsReadOnly;
+
         if (shown == _shown && !force)
         {
-            _remove.greyedOut = Selected == null;
+            _remove.greyedOut = Selected == null || FriendManager.IsReadOnly;
 
             return;
         }
@@ -123,11 +125,11 @@ internal sealed class RuleList
             _list.ForceValue(string.Empty);
         }
 
-        _remove.greyedOut = Selected == null;
+        _remove.greyedOut = Selected == null || FriendManager.IsReadOnly;
 
-        if (_listTopField?.GetValue(_list) is int top && top > Math.Max(0, items.Count - VisibleItems))
+        if (_list._listTop > Math.Max(0, items.Count - VisibleItems))
         {
-            _listTopField.SetValue(_list, 0);
+            _list._listTop = 0;
         }
     }
 

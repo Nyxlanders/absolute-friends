@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>AbsoluteFriends.Meadow</AssemblyName>
+    <RootNamespace>AbsoluteFriends.Meadow</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\AbsoluteFriends.csproj" Private="false" />
+    <ProjectReference Include="..\core\AbsoluteCore.csproj" Private="false" />
+    <ProjectReference Include="..\manager\AbsoluteManager.csproj" Private="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="MonoMod.RuntimeDetour" HintPath="$(LibraryPath)MonoMod.RuntimeDetour.dll" Private="false" />
+    <Reference Include="Rain Meadow" HintPath="$(LibraryPath)Rain Meadow.dll" Private="false" />
+  </ItemGroup>
+
+</Project>

@@ -76,14 +76,24 @@ public static partial class FriendUtils
         }
     }
 
-    internal static bool HasMultipleKnownSlugcats => (RainWorldUtils.CurrentGame?.Players.Count ?? 0) + _trackedSlugpups.Count > 1;
-
     public static IEnumerable<AbstractCreature> TrackingCandidates => Players
         .Concat(_trackedCreatures)
         .Distinct()
         .Where(creature => (!creature.slatedForDeletion || creature.state?.dead == true) && creature.IsTrackingAllowed);
 
-    private static IEnumerable<AbstractCreature> Players => RainWorldUtils.CurrentGame?.Players ?? [];
+    internal static bool HasMultipleKnownSlugcats => Players.Take(2).Count() + _trackedSlugpups.Count > 1;
+
+    private static IEnumerable<AbstractCreature> Players => RainWorldUtils.CurrentGame.AllPlayers;
+
+    public static void RegisterTrackingRule(Func<AbstractCreature, bool> rule)
+    {
+        if (rule != null && !_trackingRules.Contains(rule))
+        {
+            _trackingRules.Add(rule);
+        }
+    }
+
+    public static void UnregisterTrackingRule(Func<AbstractCreature, bool> rule) => _trackingRules.Remove(rule);
 
     internal static void ClearTrackedFriends()
     {
@@ -108,23 +118,13 @@ public static partial class FriendUtils
         _trackedSlugpups.RemoveWhere(abstractCreature => !_trackedCreatures.Contains(abstractCreature));
     }
 
-    public static void RegisterTrackingRule(Func<AbstractCreature, bool> rule)
-    {
-        if (rule != null && !_trackingRules.Contains(rule))
-        {
-            _trackingRules.Add(rule);
-        }
-    }
-
-    public static void UnregisterTrackingRule(Func<AbstractCreature, bool> rule) => _trackingRules.Remove(rule);
-
     extension(AbstractCreature? source)
     {
         public bool IsTracked
         {
             get
             {
-                if (source == null || (!_trackedCreatures.Contains(source) && RainWorldUtils.CurrentGame?.Players.Contains(source) != true))
+                if (source == null || (!_trackedCreatures.Contains(source) && !Players.Contains(source)))
                 {
                     return false;
                 }
@@ -144,9 +144,6 @@ public static partial class FriendUtils
             && source?.state?.socialMemory?.GetRelationship(abstractPlayer.ID) is { } relationship
             && IsLiked(relationship.like, relationship.tempLike));
 
-        private bool IsCloseFriendOf(AbstractCreature abstractSlugcat) => !abstractSlugcat.IsDenied
-            && source.GetCreatureFriendship(abstractSlugcat, allowNeutral: false) == true;
-
         private bool IsTrackingAllowed
         {
             get
@@ -158,11 +155,11 @@ public static partial class FriendUtils
 
                 if (source.IsSlugcat)
                 {
-                    return Config.FriendSlugcat.IsActive && source.GetSlugcatFriendshipVerdict() != false;
+                    return Config.FriendSlugcat.IsActive && source.SlugcatFriendshipVerdict != false;
                 }
 
                 return !source.IsDenied
-                    && (source.GetSlugcatFriendshipVerdict() ?? source.IsFriendlyAllowed);
+                    && (source.SlugcatFriendshipVerdict ?? source.IsFriendlyAllowed);
             }
         }
 
@@ -240,6 +237,9 @@ public static partial class FriendUtils
                 ? playerIds.Contains(target.ID)
                 : null;
         }
+
+        private bool IsCloseFriendOf(AbstractCreature abstractSlugcat) => !abstractSlugcat.IsDenied
+            && source.GetCreatureFriendship(abstractSlugcat, allowNeutral: false) == true;
     }
 
     extension(EntityID id)

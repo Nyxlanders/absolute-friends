@@ -11,15 +11,40 @@ public static partial class FriendUtils
 {
     private static readonly AddonLogger _logger = Reporter.GetLogger(Plugin.Name);
 
-    private static readonly Dictionary<(AbstractCreature, AbstractCreature), bool> _chainingFriendships = [];
+    private static readonly List<AbstractCreature> _noSlugcats = [];
+
+    private static readonly Dictionary<AbstractCreature, List<AbstractCreature>> _chainingSlugcats = [];
+
+    private static readonly Dictionary<(AbstractCreature, AbstractCreature, bool), FriendshipType?> _directFriendships = [];
 
     private static readonly ConditionalWeakTable<RelationshipTracker.DynamicRelationship, StrongBox<CreatureTemplate.Relationship>> _vanillaRelationships = new();
 
-    private static RainWorldGame? _chainingGame;
+    private static RainWorldGame? _cacheGame;
 
-    private static int _chainingClock = -1;
+    private static int _cacheClock = -1;
 
-    private static int _chainingFrame = -1;
+    private static int _cacheFrame = -1;
+
+    private static bool UseTickCache()
+    {
+        if (RainWorldUtils.CurrentGame is not { } game)
+        {
+            return false;
+        }
+
+        int frame = game.GamePaused ? Time.frameCount : -1;
+
+        if (_cacheGame != game || _cacheClock != game.clock || _cacheFrame != frame)
+        {
+            _chainingSlugcats.Clear();
+            _directFriendships.Clear();
+            _cacheGame = game;
+            _cacheClock = game.clock;
+            _cacheFrame = frame;
+        }
+
+        return true;
+    }
 
     private static bool IsLiked(float like, float tempLike) => like > FriendLikeThreshold && (tempLike == 0f ? like : tempLike) > FriendLikeThreshold;
 
@@ -76,6 +101,30 @@ public static partial class FriendUtils
                 }
 
                 return unresolved ? null : ruled;
+            }
+        }
+
+        private List<AbstractCreature> ChainingSlugcats
+        {
+            get
+            {
+                if (source == null)
+                {
+                    return _noSlugcats;
+                }
+
+                if (!UseTickCache())
+                {
+                    return source.FindChainingSlugcats();
+                }
+
+                if (!_chainingSlugcats.TryGetValue(source, out List<AbstractCreature> slugcats))
+                {
+                    slugcats = source.FindChainingSlugcats();
+                    _chainingSlugcats[source] = slugcats;
+                }
+
+                return slugcats;
             }
         }
 
@@ -188,6 +237,24 @@ public static partial class FriendUtils
 
         private FriendshipType? GetDirectFriendshipType(AbstractCreature abstractSlugcat, bool allowNeutral = true)
         {
+            if (source == null || !UseTickCache())
+            {
+                return source.FindDirectFriendshipType(abstractSlugcat, allowNeutral);
+            }
+
+            var key = (source, abstractSlugcat, allowNeutral);
+
+            if (!_directFriendships.TryGetValue(key, out FriendshipType? type))
+            {
+                type = source.FindDirectFriendshipType(abstractSlugcat, allowNeutral);
+                _directFriendships[key] = type;
+            }
+
+            return type;
+        }
+
+        private FriendshipType? FindDirectFriendshipType(AbstractCreature abstractSlugcat, bool allowNeutral)
+        {
             if (source.IsSlugcat)
             {
                 return FriendshipType.Friendly;
@@ -221,47 +288,33 @@ public static partial class FriendUtils
                 && source.GetReputation(abstractSlugcat) is not < FriendReputationThreshold ? FriendshipType.Neutral : null;
         }
 
-        private bool IsFriendForChaining(AbstractCreature abstractSlugcat)
+        private List<AbstractCreature> FindChainingSlugcats()
         {
-            RainWorldGame? game = RainWorldUtils.CurrentGame;
+            List<AbstractCreature>? slugcats = null;
 
-            if (source == null || game == null)
+            foreach (var abstractSlugcat in KnownSlugcats)
             {
-                return source.IsFriend(abstractSlugcat, true, false);
+                if (source.IsFriend(abstractSlugcat, true, false))
+                {
+                    (slugcats ??= []).Add(abstractSlugcat);
+                }
             }
 
-            int frame = game.GamePaused ? Time.frameCount : -1;
-
-            if (_chainingGame != game || _chainingClock != game.clock || _chainingFrame != frame)
-            {
-                _chainingFriendships.Clear();
-                _chainingGame = game;
-                _chainingClock = game.clock;
-                _chainingFrame = frame;
-            }
-
-            var key = (source, abstractSlugcat);
-
-            if (!_chainingFriendships.TryGetValue(key, out bool isFriend))
-            {
-                isFriend = source.IsFriend(abstractSlugcat, true, false);
-                _chainingFriendships[key] = isFriend;
-            }
-
-            return isFriend;
+            return slugcats ?? _noSlugcats;
         }
 
         private bool IsChainedFriend(AbstractCreature target)
         {
-            foreach (var abstractSlugcat in KnownSlugcats)
+            List<AbstractCreature> sourceSlugcats = source.ChainingSlugcats;
+
+            if (sourceSlugcats.Count == 0)
             {
-                if (source.IsFriendForChaining(abstractSlugcat) && target.IsFriendForChaining(abstractSlugcat))
-                {
-                    return true;
-                }
+                return false;
             }
 
-            return false;
+            List<AbstractCreature> targetSlugcats = target.ChainingSlugcats;
+
+            return targetSlugcats.Count > 0 && sourceSlugcats.Any(targetSlugcats.Contains);
         }
 
         private FriendshipType GetFriendshipType(AbstractCreature? target, bool chaining)

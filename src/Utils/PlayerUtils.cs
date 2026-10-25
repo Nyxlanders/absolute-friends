@@ -1,4 +1,5 @@
 using MoreSlugcats;
+using UnityEngine;
 
 namespace AbsoluteFriends.Utils;
 
@@ -6,15 +7,57 @@ public static class PlayerUtils
 {
     private static readonly List<Func<RainWorldGame, IEnumerable<AbstractCreature>>> _playerSources = [];
 
+    private static List<AbstractCreature> _players = [];
+
+    private static RainWorldGame? _playersGame;
+
+    private static int _playersClock = -1;
+
+    private static int _playersFrame = -1;
+
+    private static int _playersCount = -1;
+
     public static void RegisterPlayerSource(Func<RainWorldGame, IEnumerable<AbstractCreature>> source)
     {
         if (source != null && !_playerSources.Contains(source))
         {
             _playerSources.Add(source);
+            _playersGame = null;
         }
     }
 
-    public static void UnregisterPlayerSource(Func<RainWorldGame, IEnumerable<AbstractCreature>> source) => _playerSources.Remove(source);
+    public static void UnregisterPlayerSource(Func<RainWorldGame, IEnumerable<AbstractCreature>> source)
+    {
+        _playerSources.Remove(source);
+        _playersGame = null;
+    }
+
+    private static List<AbstractCreature> CollectPlayers(RainWorldGame game)
+    {
+        List<AbstractCreature> players = [];
+        HashSet<AbstractCreature> seen = [];
+
+        foreach (var abstractPlayer in game.Players)
+        {
+            if (abstractPlayer != null && seen.Add(abstractPlayer))
+            {
+                players.Add(abstractPlayer);
+            }
+        }
+
+        foreach (var source in _playerSources.ToArray())
+        {
+            foreach (var abstractPlayer in source(game) ?? [])
+            {
+                if (abstractPlayer is { IsPlayer: true } && seen.Add(abstractPlayer))
+                {
+                    players.Add(abstractPlayer);
+                }
+            }
+        }
+
+        return players;
+    }
 
     extension(AbstractPhysicalObject? abstractPhysicalObject)
     {
@@ -38,35 +81,27 @@ public static class PlayerUtils
 
     extension(RainWorldGame? game)
     {
-        public IEnumerable<AbstractCreature> AllPlayers
+        public IReadOnlyList<AbstractCreature> AllPlayers
         {
             get
             {
                 if (game == null)
                 {
-                    yield break;
+                    return [];
                 }
 
-                HashSet<AbstractCreature>? seen = _playerSources.Count > 0 ? [] : null;
+                int frame = game.GamePaused ? Time.frameCount : -1;
 
-                foreach (var abstractPlayer in game.Players)
+                if (_playersGame != game || _playersClock != game.clock || _playersFrame != frame || _playersCount != game.Players.Count)
                 {
-                    if (abstractPlayer != null && seen?.Add(abstractPlayer) != false)
-                    {
-                        yield return abstractPlayer;
-                    }
+                    _players = CollectPlayers(game);
+                    _playersGame = game;
+                    _playersClock = game.clock;
+                    _playersFrame = frame;
+                    _playersCount = game.Players.Count;
                 }
 
-                foreach (var source in _playerSources.ToArray())
-                {
-                    foreach (var abstractPlayer in source(game) ?? [])
-                    {
-                        if (abstractPlayer is { IsPlayer: true } && seen?.Add(abstractPlayer) != false)
-                        {
-                            yield return abstractPlayer;
-                        }
-                    }
-                }
+                return _players;
             }
         }
 

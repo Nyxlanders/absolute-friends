@@ -81,9 +81,9 @@ public static partial class FriendUtils
         .Distinct()
         .Where(creature => (!creature.slatedForDeletion || creature.state?.dead == true) && creature.IsTrackingAllowed);
 
-    internal static bool HasMultipleKnownSlugcats => Players.Take(2).Count() + _trackedSlugpups.Count > 1;
+    internal static bool HasMultipleKnownSlugcats => Players.Count + _trackedSlugpups.Count > 1;
 
-    private static IEnumerable<AbstractCreature> Players => RainWorldUtils.CurrentGame.AllPlayers;
+    private static IReadOnlyList<AbstractCreature> Players => RainWorldUtils.CurrentGame.AllPlayers;
 
     public static void RegisterTrackingRule(Func<AbstractCreature, bool> rule)
     {
@@ -99,10 +99,11 @@ public static partial class FriendUtils
     {
         _trackedSlugpups.Clear();
         _trackedCreatures.Clear();
-        _chainingFriendships.Clear();
-        _chainingGame = null;
-        _chainingClock = -1;
-        _chainingFrame = -1;
+        _chainingSlugcats.Clear();
+        _directFriendships.Clear();
+        _cacheGame = null;
+        _cacheClock = -1;
+        _cacheFrame = -1;
         _trackedPlayerIds = new();
     }
 

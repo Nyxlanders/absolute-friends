@@ -100,8 +100,8 @@ public static partial class FriendUtils
         RainWorldGame? game = RainWorldUtils.CurrentGame;
 
         bool IsStale(AbstractCreature abstractCreature) =>
-            (abstractCreature.slatedForDeletion && abstractCreature.state?.dead != true)
-            || abstractCreature.world != game?.world;
+            abstractCreature.world != game?.world
+            || (abstractCreature.state?.dead != true && (abstractCreature.slatedForDeletion || (abstractCreature.HasAuthority && !abstractCreature.IsInAbstractRoom)));
 
         _trackedCreatures.RemoveWhere(IsStale);
         _trackedSlugpups.RemoveWhere(abstractCreature => !_trackedCreatures.Contains(abstractCreature));
@@ -120,6 +120,8 @@ public static partial class FriendUtils
             abstractPlayer is { slatedForDeletion: false, state.dead: false }
             && source?.state?.socialMemory?.GetRelationship(abstractPlayer.ID) is { } relationship
             && IsLiked(relationship.like, relationship.tempLike));
+
+        private bool IsInAbstractRoom => source?.world?.GetAbstractRoom(source.pos) is { } abstractRoom && (abstractRoom.entities.Contains(source) || abstractRoom.entitiesInDens.Contains(source));
 
         private bool IsTrackingAllowed
         {

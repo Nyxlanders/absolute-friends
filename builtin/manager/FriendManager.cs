@@ -28,11 +28,11 @@ public static class FriendManager
 
     public static EntityID? HostIdOf(AbstractCreature abstractCreature) => abstractCreature.HostID;
 
-    public static void RegisterRemoteForget(Action<AbstractCreature> forget) => FriendTracking.RegisterRemoteForget(forget);
+    public static void RegisterRemoteForget(Action<AbstractCreature> forget) => FriendForgetting.RegisterRemoteForget(forget);
 
-    public static void UnregisterRemoteForget(Action<AbstractCreature> forget) => FriendTracking.UnregisterRemoteForget(forget);
+    public static void UnregisterRemoteForget(Action<AbstractCreature> forget) => FriendForgetting.UnregisterRemoteForget(forget);
 
-    public static void ClearFriendship(AbstractCreature abstractCreature) => FriendTracking.ClearFriendship(abstractCreature);
+    public static void ClearFriendship(AbstractCreature abstractCreature) => FriendForgetting.ClearFriendship(abstractCreature);
 
     public static void RegisterTab(string id, string title, Action<FriendTab> build, Func<AbstractCreature, bool>? isVisible = null)
     {

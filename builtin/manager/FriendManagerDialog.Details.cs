@@ -33,10 +33,6 @@ internal partial class FriendManagerDialog
 
         private readonly OpSimpleImageButton _clear;
 
-        private readonly OpCheckBox _tracking;
-
-        private readonly OpLabel _trackingLabel;
-
         private readonly OpLabel _relationshipsTitle;
 
         private readonly ScrollArea _relationships;
@@ -58,8 +54,7 @@ internal partial class FriendManagerDialog
 
             float width = tab.Size.x;
             float nameY = tab.Size.y - ButtonSize;
-            float trackingY = nameY - 36f;
-            float relationshipsTitleY = trackingY - 50f;
+            float relationshipsTitleY = nameY - 50f;
             float relationshipsHeight = relationshipsTitleY - 8f - FooterHeight;
 
             _icon = new(new Vector2(ButtonSize * 0.5f, nameY + ButtonSize * 0.5f), "Futile_White")
@@ -77,8 +72,6 @@ internal partial class FriendManagerDialog
             {
                 description = Translation.Of("Clear this nickname.")
             };
-            _tracking = new(new Configurable<bool>(false, new ConfigurableInfo("Track this friend.")), new Vector2(0f, trackingY));
-            _trackingLabel = new(new Vector2(32f, trackingY), new Vector2(width - 32f, ButtonSize), Translation.Of("Track this friend"), FLabelAlignment.Left);
             _relationshipsTitle = new(new Vector2(0f, relationshipsTitleY), new Vector2(width, TitleHeight), Translation.Of("Friend Relationships"), FLabelAlignment.Center, true);
             _relationships = new(new Vector2(0f, FooterHeight), new Vector2(width + MenuBuilder.Padding, relationshipsHeight));
             _noRelationships = new(new Vector2(0f, FooterHeight), new Vector2(width, relationshipsHeight), Translation.Of("No other friends"), FLabelAlignment.Center)
@@ -96,10 +89,9 @@ internal partial class FriendManagerDialog
             };
 
             _clear.OnClick += delegate { SetNickname(null); };
-            _tracking.OnValueUpdate += delegate { SetTracked(_tracking.value == "true"); };
             _forget.Done += Forget;
 
-            foreach (var element in (UIelement[])[_icon, _name, _nickname, _clear, _tracking, _trackingLabel, _relationshipsTitle, _relationships, _noRelationships, _divider, _forget])
+            foreach (var element in (UIelement[])[_icon, _name, _nickname, _clear, _relationshipsTitle, _relationships, _noRelationships, _divider, _forget])
             {
                 tab.Add(element);
             }
@@ -127,7 +119,7 @@ internal partial class FriendManagerDialog
             SetShown(_name, friend is { IsPlayer: true });
 
             SetShown(named, _nickname, _clear);
-            SetShown(friend != null, _tracking, _trackingLabel, _relationshipsTitle, _relationships);
+            SetShown(friend != null, _relationshipsTitle, _relationships);
             SetShown(forgettable, _divider, _forget);
 
             RefreshRelationships(friend);
@@ -137,9 +129,6 @@ internal partial class FriendManagerDialog
                 return;
             }
 
-            bool tracked = friend.IsTracked;
-            bool locked = friend.IsTrackingLocked;
-            bool blocked = !friend.IsPlayer && !locked && !tracked && !friend.IsExcluded;
             bool readOnly = FriendManager.IsReadOnly;
 
             if (!_icon.Hidden)
@@ -162,16 +151,6 @@ internal partial class FriendManagerDialog
             {
                 _nickname.value = friend.FriendName;
             }
-
-            _tracking.ForceValue(tracked ? "true" : "false");
-            _tracking.greyedOut = friend.IsPlayer || locked || blocked;
-            _tracking.description = Translation.Of(friend.IsPlayer
-                ? "Players are always tracked."
-                : locked
-                    ? "Only the host can change this."
-                    : blocked
-                        ? "Another addon keeps this friend untracked."
-                        : tracked ? "Stop tracking this friend. Friendship is kept." : "Track this friend.");
         }
 
         private void RefreshRelationships(AbstractCreature? friend)
@@ -204,18 +183,6 @@ internal partial class FriendManagerDialog
             }
 
             SetShown(_noRelationships, friend != null && others.Count == 0);
-        }
-
-        private void SetTracked(bool tracked)
-        {
-            if (_tab.Friend is not { } friend)
-            {
-                return;
-            }
-
-            friend.SetTracked(tracked);
-            _tab.RefreshManager();
-            Refresh();
         }
 
         private void SetNickname(string? value)

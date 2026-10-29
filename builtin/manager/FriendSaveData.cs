@@ -100,10 +100,7 @@ internal static class FriendSaveData
             ? Decode(entries[0])
             : null;
 
-    internal static string Export(RainWorldGame game) => string.Join(HostSectionSeparator.ToString(), FriendTracking.Export(game)
-        .Append(FriendNicknames.Export(game))
-        .Append(FriendStorage.Export(game))
-        .Append((Key: HostIdsKey, Entries: HostIds()))
+    internal static string Export(RainWorldGame game) => string.Join(HostSectionSeparator.ToString(), ((IEnumerable<(string Key, IEnumerable<string> Entries)>)[FriendNicknames.Export(game), FriendStorage.Export(game), (HostIdsKey, HostIds())])
         .Concat(_hostData.Select(data => (Key: HostDataPrefix + data.Key, Entries: data.Value(game) is { } value ? (IEnumerable<string>)[Encode(value)] : [])))
         .Select(section => string.Join(HostEntrySeparator.ToString(), [section.Key, .. section.Entries])));
 

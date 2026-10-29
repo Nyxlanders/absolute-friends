@@ -40,7 +40,7 @@ public class Plugin : AddonPlugin
     {
         // Register external rules here when they need matching cleanup in Disable.
         RelationshipRules.Register();
-        TrackingRules.Register();
+        NameRules.Register();
         ManagerTab.Register();
         HunterSync.Register();
 
@@ -51,7 +51,7 @@ public class Plugin : AddonPlugin
     protected override void Disable()
     {
         RelationshipRules.Unregister();
-        TrackingRules.Unregister();
+        NameRules.Unregister();
         ManagerTab.Unregister();
         HunterSync.Unregister();
 

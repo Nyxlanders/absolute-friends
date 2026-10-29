@@ -16,7 +16,7 @@ public class Plugin : AddonPlugin
 
     public const string Name = "Absolute Friends: Manager";
 
-    public override string AddonDescription => "Lists friends during gameplay, shows their relationships, and manages tracking and nicknames.";
+    public override string AddonDescription => "Lists friends during gameplay, shows their relationships, and manages nicknames.";
 
     public override string[] AddonDependencies => [Core.Plugin.GUID];
 
@@ -28,14 +28,12 @@ public class Plugin : AddonPlugin
 
     protected override void Enable()
     {
-        FriendTracking.Register();
         FriendNicknames.Register();
         InputBlocker.Register();
     }
 
     protected override void Disable()
     {
-        FriendTracking.Unregister();
         FriendNicknames.Unregister();
         InputBlocker.Unregister();
     }

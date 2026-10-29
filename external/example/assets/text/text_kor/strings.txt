@@ -100,8 +100,6 @@ Aggressive Hunter|사냥꾼 적대
 Preserves Hunter's hostile relationship with Hunter Long Legs.|사냥꾼과 헌터 롱 레그의 적대 관계를 유지합니다.
 Tentacle Ownership|촉수 소유
 Makes Hunter Long Legs own anything held by its tentacles.|헌터 롱 레그가 촉수로 붙잡은 대상을 소유하게 합니다.
-Untracked Long Legs|롱 레그 추적 제외
-Keeps Hunter Long Legs untracked, so other addons do not treat it as a companion.|헌터 롱 레그를 추적하지 않아 다른 애드온이 동료로 취급하지 않게 합니다.
 Long Legs Name|롱 레그 이름
 Gives each Hunter Long Legs a name.|헌터 롱 레그마다 이름을 붙입니다.
 Green Neuron Ownership|녹색 신경파리 소유

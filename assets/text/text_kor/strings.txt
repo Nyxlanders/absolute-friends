@@ -140,25 +140,17 @@ Story and Expedition|스토리와 원정
 Enables friendship rules in Story and Expedition modes.|스토리와 원정 모드에서 친구 관계 규칙을 활성화합니다.
 
 Absolute Friends: Manager|절대적 친구: 관리자
-Lists friends during gameplay, shows their relationships, and manages tracking and nicknames.|게임 도중 친구 목록과 관계를 보여주고 추적과 별명을 관리합니다.
+Lists friends during gameplay, shows their relationships, and manages nicknames.|게임 도중 친구 목록과 관계를 보여주고 별명을 관리합니다.
 
 Friend Manager|친구 관리자
 Manager Key|관리자 키
 Opens the friend manager during gameplay or while paused.|게임 도중이나 일시정지한 동안 친구 관리자를 엽니다.
-Track New Friends|새 친구 추적
-Tracks newly tamed friends. When off, new friends start untracked.|새로 길들인 친구를 추적합니다. 끄면 새 친구는 추적하지 않는 상태로 시작합니다.
 
 No trackable friends|추적할 수 있는 친구 없음
 Show this friend's details.|이 친구의 상세 정보를 표시합니다.
 Show <PLACEHOLDER>.|<PLACEHOLDER> 탭을 표시합니다.
 Show earlier tabs.|이전 탭을 표시합니다.
 Show later tabs.|다음 탭을 표시합니다.
-Track this friend.|이 친구를 추적합니다.
-Stop tracking this friend. Friendship is kept.|이 친구의 추적을 끕니다. 친구 관계는 유지됩니다.
-Players are always tracked.|플레이어는 항상 추적됩니다.
-Another addon keeps this friend untracked.|다른 애드온이 이 친구를 추적하지 않게 합니다.
-Only the host can change this.|호스트만 바꿀 수 있습니다.
-Track this friend|이 친구 추적
 Edit this friend's nickname.|이 친구의 별명을 편집합니다.
 Clear this nickname.|이 별명을 지웁니다.
 Forget Friend|친구 잊기

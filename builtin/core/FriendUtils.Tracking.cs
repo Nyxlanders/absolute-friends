@@ -12,8 +12,6 @@ public static partial class FriendUtils
 
     private static readonly HashSet<AbstractCreature> _trackedCreatures = [];
 
-    private static readonly List<Func<AbstractCreature, bool>> _trackingRules = [];
-
     public static IEnumerable<AbstractCreature> TrackedFriends
     {
         get
@@ -85,16 +83,6 @@ public static partial class FriendUtils
 
     private static IReadOnlyList<AbstractCreature> Players => RainWorldUtils.CurrentGame.AllPlayers;
 
-    public static void RegisterTrackingRule(Func<AbstractCreature, bool> rule)
-    {
-        if (rule != null && !_trackingRules.Contains(rule))
-        {
-            _trackingRules.Add(rule);
-        }
-    }
-
-    public static void UnregisterTrackingRule(Func<AbstractCreature, bool> rule) => _trackingRules.Remove(rule);
-
     internal static void ClearTrackedFriends()
     {
         _trackedSlugpups.Clear();
@@ -121,19 +109,7 @@ public static partial class FriendUtils
 
     extension(AbstractCreature? source)
     {
-        public bool IsTracked
-        {
-            get
-            {
-                if (source == null || (!_trackedCreatures.Contains(source) && !Players.Contains(source)))
-                {
-                    return false;
-                }
-
-                return source.IsTrackingAllowed
-                    && (source.IsPlayer || _trackingRules.All(rule => rule(source)));
-            }
-        }
+        public bool IsTracked => source != null && (_trackedCreatures.Contains(source) || Players.Contains(source)) && source.IsTrackingAllowed;
 
         internal bool IsCloseFriendOfPlayer => IsFriendSession
             && source is { } abstractCreature

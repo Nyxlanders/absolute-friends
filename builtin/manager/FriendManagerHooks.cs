@@ -150,7 +150,5 @@ internal class FriendManagerHooks : BaseHooks
         TryOpen(self.manager, self);
 
         orig(self);
-
-        FriendTracking.MeetNewFriends(self);
     }
 }

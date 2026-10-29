@@ -11,7 +11,6 @@ internal static class AddonMenu
         menu.AddCheckBox(AddonConfig.Friendship, enabled: ModManager.MSC);
         menu.AddCheckBox(AddonConfig.AggressiveHunter, enabled: ModManager.MSC);
         menu.AddCheckBox(AddonConfig.HunterDaddyOwnership, enabled: ModManager.MSC);
-        menu.AddCheckBox(AddonConfig.UntrackedHunter, enabled: ModManager.MSC);
         menu.AddCheckBox(AddonConfig.HunterName, enabled: ModManager.MSC);
         menu.AddCheckBox(AddonConfig.GreenNeuronOwnership, enabled: ModManager.MSC);
     }

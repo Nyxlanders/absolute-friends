@@ -89,6 +89,8 @@ public static partial class FriendUtils
         _trackedCreatures.Clear();
         _chainingSlugcats.Clear();
         _directFriendships.Clear();
+        _controllers.Clear();
+        _controllersFound = false;
         _cacheGame = null;
         _cacheClock = -1;
         _cacheFrame = -1;
@@ -127,7 +129,7 @@ public static partial class FriendUtils
         {
             get
             {
-                if (!IsFriendSession || source == null)
+                if (!IsFriendSession || source == null || source.Controller != null)
                 {
                     return false;
                 }

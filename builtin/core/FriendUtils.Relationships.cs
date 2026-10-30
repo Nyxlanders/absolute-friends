@@ -38,6 +38,8 @@ public static partial class FriendUtils
         {
             _chainingSlugcats.Clear();
             _directFriendships.Clear();
+            _controllers.Clear();
+            _controllersFound = false;
             _cacheGame = game;
             _cacheClock = game.clock;
             _cacheFrame = frame;
@@ -319,6 +321,16 @@ public static partial class FriendUtils
 
         private FriendshipType GetFriendshipType(AbstractCreature? target, bool chaining)
         {
+            if (source.Controller is { } sourceController)
+            {
+                return sourceController.GetFriendshipType(target, chaining);
+            }
+
+            if (target.Controller is { } targetController)
+            {
+                return source.GetFriendshipType(targetController, chaining);
+            }
+
             if (
                 source == null
                 || target == null

@@ -121,7 +121,7 @@ public static partial class FriendUtils
         private bool IsFriend(AbstractPhysicalObject? target, bool direct, bool chaining) =>
             source.GetFriendshipType(target, direct, chaining) != FriendshipType.None;
 
-        private bool IsTrackedWith(AbstractPhysicalObject? target) => target is AbstractCreature { IsPlayer: true } abstractPlayer && source is AbstractCreature { IsPlayer: false } abstractCreature && abstractCreature.IsTrackedFor(abstractPlayer);
+        private bool IsTrackedWith(AbstractPhysicalObject? target) => ((target as AbstractCreature)?.Controller ?? target) is AbstractCreature { IsPlayer: true } abstractPlayer && source is AbstractCreature { IsPlayer: false } abstractCreature && abstractCreature.IsTrackedFor(abstractPlayer);
 
         private FriendshipType GetFriendshipType(AbstractPhysicalObject? target, bool direct, bool chaining)
         {

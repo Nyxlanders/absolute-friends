@@ -12,7 +12,7 @@ namespace AbsoluteFriendsExample;
 [BepInDependency(AbsoluteFriends.Manager.Plugin.GUID)]
 public class Plugin : AddonPlugin
 {
-    public const string GUID = "pjhgamma.absolutefriends.example";
+    public const string GUID = "pjhgamma.absolutefriendsexample";
 
     public const string Name = "Absolute Friends: Example";
 

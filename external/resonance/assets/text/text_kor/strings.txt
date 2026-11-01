@@ -1,5 +1,5 @@
-0pjhgamma.absolutefriends.resonance-name|공명
-pjhgamma.absolutefriends.resonance-description|공명을 통해 추적되는 친구들을 순간이동시키고 치유합니다.
+0pjhgamma.resonance-name|공명
+pjhgamma.resonance-description|공명을 통해 추적되는 친구들을 순간이동시키고 치유합니다.
 
 Warps and mends tracked friends through resonance.|공명을 통해 추적되는 친구들을 순간이동시키고 치유합니다.
 

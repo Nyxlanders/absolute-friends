@@ -1,5 +1,5 @@
-0pjhgamma.absolutefriends.chainedtogether-name|체인드 투게더
-pjhgamma.absolutefriends.chainedtogether-description|추적되는 친구끼리 체인으로 묶습니다.
+0pjhgamma.chainedtogether-name|체인드 투게더
+pjhgamma.chainedtogether-description|추적되는 친구끼리 체인으로 묶습니다.
 
 Chained Together|체인드 투게더
 Chains tracked friends together.|추적되는 친구끼리 체인으로 묶습니다.

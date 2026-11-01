@@ -14,7 +14,7 @@ namespace AbsoluteFriends.FriendshipEditor;
 [BepInDependency(Manager.Plugin.GUID)]
 public class Plugin : AddonPlugin
 {
-    public const string GUID = "pjhgamma.absolutefriends.friendshipeditor";
+    public const string GUID = "pjhgamma.friendshipeditor";
 
     public const string Name = "Friendship Editor";
 

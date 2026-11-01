@@ -12,7 +12,7 @@ namespace AbsoluteFriends.ChainedTogether;
 [BepInDependency(Core.Plugin.GUID)]
 public class Plugin : AddonPlugin
 {
-    public const string GUID = "pjhgamma.absolutefriends.chainedtogether";
+    public const string GUID = "pjhgamma.chainedtogether";
 
     public const string Name = "Chained Together";
 

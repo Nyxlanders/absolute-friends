@@ -1,5 +1,5 @@
-0pjhgamma.absolutefriends.example-name|절대적 친구: 예제
-pjhgamma.absolutefriends.example-description|리믹스 플러그인과 절대적 친구 애드온을 한 모드에 담은 예제입니다.
+0pjhgamma.absolutefriendsexample-name|절대적 친구: 예제
+pjhgamma.absolutefriendsexample-description|리믹스 플러그인과 절대적 친구 애드온을 한 모드에 담은 예제입니다.
 
 Absolute Friends: Example|절대적 친구: 예제
 Adds friendship, ownership, tracking, and name rules for Hunter Long Legs and the green Neuron.|헌터 롱 레그와 녹색 신경파리에 친구, 소유, 추적, 이름 규칙을 추가합니다.

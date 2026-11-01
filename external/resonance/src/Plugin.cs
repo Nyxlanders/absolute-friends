@@ -12,7 +12,7 @@ namespace AbsoluteFriends.Resonance;
 [BepInDependency(Core.Plugin.GUID)]
 public class Plugin : AddonPlugin
 {
-    public const string GUID = "pjhgamma.absolutefriends.resonance";
+    public const string GUID = "pjhgamma.resonance";
 
     public const string Name = "Resonance";
 

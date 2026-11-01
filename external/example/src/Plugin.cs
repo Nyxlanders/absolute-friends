@@ -16,7 +16,7 @@ public class Plugin : AddonPlugin
 
     public const string Name = "Absolute Friends: Example";
 
-    public const string Version = "0.2.0";
+    public const string Version = "0.2.1";
 
     public override string AddonDescription => "Adds friendship, ownership, tracking, and name rules for Hunter Long Legs and the green Neuron.";
 

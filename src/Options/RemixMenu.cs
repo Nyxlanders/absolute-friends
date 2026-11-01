@@ -7,6 +7,8 @@ namespace AbsoluteFriends.Options;
 
 internal partial class RemixMenu : MenuBuilder
 {
+    private const string OptionCountTemplate = "Options enabled: <PLACEHOLDER> / <PLACEHOLDER>, other settings: <PLACEHOLDER>";
+
     private const int MinimumProfileSlots = 32;
 
     private const int SpareProfileSlots = 16;
@@ -70,17 +72,12 @@ internal partial class RemixMenu : MenuBuilder
 
     private static void Retitle(OpLabel label, string template, Addon addon)
     {
-        string text = template.FillPlaceholders(OptionCountText(addon));
+        string text = template.FillPlaceholders(addon.EnabledOptionCount, addon.OptionCount, addon.SettingCount);
 
         if (label.text != text)
         {
             label.text = text;
         }
-    }
-
-    private static string OptionCountText(Addon addon)
-    {
-        return $"{addon.EnabledOptionCount} / {addon.OptionCount}";
     }
 
     private SectionFilter? AddListSearch(string key, string description)

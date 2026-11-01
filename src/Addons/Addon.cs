@@ -82,6 +82,8 @@ public class Addon
 
     public int EnabledOptionCount => _switches.Count(option => option.IsSelected);
 
+    public int SettingCount => _options.Count - _switches.Count;
+
     public Configurable<bool>? Enabled { get; }
 
     public IReadOnlyList<OptionGroup> Groups => _groups;

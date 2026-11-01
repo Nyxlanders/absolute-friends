@@ -23,7 +23,7 @@ External Addons|외부 애드온
 Enables this addon.|이 애드온을 활성화합니다.
 Remix is not enabled.|리믹스가 활성화되지 않았습니다.
 Built for Absolute Friends v<PLACEHOLDER>; it may not work correctly.|Absolute Friends v<PLACEHOLDER>용으로 빌드되었으며, 올바르게 작동하지 않을 수 있습니다.
-Options enabled: <PLACEHOLDER>|활성화된 옵션: <PLACEHOLDER>
+Options enabled: <PLACEHOLDER> / <PLACEHOLDER>, other settings: <PLACEHOLDER>|활성화된 옵션: <PLACEHOLDER> / <PLACEHOLDER>, 기타 설정: <PLACEHOLDER>
 Shows or hides this addon's options.|이 애드온의 옵션을 표시하거나 숨깁니다.
 Options are in the Detailed view.|옵션은 상세 보기에서 조정합니다.
 

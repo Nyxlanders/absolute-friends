@@ -51,7 +51,7 @@ internal readonly struct ProfileResult(int addons, int options, int unavailableA
     internal int UnavailableOptions { get; } = unavailableOptions;
 }
 
-internal readonly struct ProfileSummary(int enabledAddons, int addons, int enabledOptions, int options, int unavailableAddons, int unavailableOptions)
+internal readonly struct ProfileSummary(int enabledAddons, int addons, int enabledOptions, int options, int settings, int unavailableAddons, int unavailableOptions)
 {
     internal int EnabledAddons { get; } = enabledAddons;
 
@@ -60,6 +60,8 @@ internal readonly struct ProfileSummary(int enabledAddons, int addons, int enabl
     internal int EnabledOptions { get; } = enabledOptions;
 
     internal int Options { get; } = options;
+
+    internal int Settings { get; } = settings;
 
     internal int UnavailableAddons { get; } = unavailableAddons;
 

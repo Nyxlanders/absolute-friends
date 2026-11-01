@@ -84,7 +84,7 @@ internal partial class RemixMenu
         SetColumns(17);
 
         OpLabel addons = AddNote("Addons enabled: <PLACEHOLDER>", "", alignment: FLabelAlignment.Left, span: 8f)!;
-        OpLabel options = AddNote("Options enabled: <PLACEHOLDER>", "", alignment: FLabelAlignment.Right, span: 8f)!;
+        OpLabel options = AddNote(OptionCountTemplate, "", alignment: FLabelAlignment.Right, span: 8f)!;
 
         AddFoldButton(
             "Shows or hides this profile's details.",
@@ -160,7 +160,7 @@ internal partial class RemixMenu
             ProfileSummary summary = profile == null ? default : ProfileManager.Summarize(profile);
 
             view.Addons.text = Translate("Addons enabled: <PLACEHOLDER>").FillPlaceholders($"{summary.EnabledAddons} / {summary.Addons}");
-            view.Options.text = Translate("Options enabled: <PLACEHOLDER>").FillPlaceholders($"{summary.EnabledOptions} / {summary.Options}");
+            view.Options.text = Translate(OptionCountTemplate).FillPlaceholders(summary.EnabledOptions, summary.Options, summary.Settings);
             view.Unavailable.text = Translate("Unavailable: <PLACEHOLDER> addons and <PLACEHOLDER> options").FillPlaceholders(
                 summary.UnavailableAddons,
                 summary.UnavailableOptions

@@ -92,6 +92,7 @@ internal static class ProfileManager
         int enabledAddons = 0;
         int enabledOptions = 0;
         int options = 0;
+        int settings = 0;
         int unavailableAddons = 0;
         int unavailableOptions = 0;
 
@@ -121,16 +122,28 @@ internal static class ProfileManager
                             enabledOptions++;
                         }
                     }
+                    else
+                    {
+                        settings++;
+                    }
                 }
-                else if (IsBoolean(option))
+                else
                 {
-                    options++;
+                    if (IsBoolean(option))
+                    {
+                        options++;
+                    }
+                    else
+                    {
+                        settings++;
+                    }
+
                     unavailableOptions++;
                 }
             }
         }
 
-        return new(enabledAddons, profile.Addons.Count, enabledOptions, options, unavailableAddons, unavailableOptions);
+        return new(enabledAddons, profile.Addons.Count, enabledOptions, options, settings, unavailableAddons, unavailableOptions);
     }
 
     internal static string ValueOf(ConfigurableBase? configurable)

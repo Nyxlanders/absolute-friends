@@ -95,7 +95,7 @@ internal partial class RemixMenu
         SetColumns(16);
         AddColumn(8f);
 
-        OpLabel? options = AddNote("Options enabled: <PLACEHOLDER>", OptionCountText(addon), span: 7f);
+        OpLabel? options = AddNote(OptionCountTemplate, "", span: 7f);
 
         AddFoldButton(
             "Shows or hides this addon's options.",
@@ -106,8 +106,9 @@ internal partial class RemixMenu
 
         if (options != null)
         {
-            string template = Translate("Options enabled: <PLACEHOLDER>");
+            string template = Translate(OptionCountTemplate);
 
+            Retitle(options, template, addon);
             Watch(() => Retitle(options, template, addon));
         }
 

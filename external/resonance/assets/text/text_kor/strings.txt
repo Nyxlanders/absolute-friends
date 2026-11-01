@@ -1,7 +1,6 @@
-0pjhgamma.absolutefriends.resonance-name|절대적 친구: 공명
+0pjhgamma.absolutefriends.resonance-name|공명
 pjhgamma.absolutefriends.resonance-description|공명을 통해 추적되는 친구들을 순간이동시키고 치유합니다.
 
-Absolute Friends: Resonance|절대적 친구: 공명
 Warps and mends tracked friends through resonance.|공명을 통해 추적되는 친구들을 순간이동시키고 치유합니다.
 
 Resonance Anchor|공명 기준점

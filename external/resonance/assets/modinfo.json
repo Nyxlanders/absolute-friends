@@ -1,7 +1,7 @@
 {
   "id": "pjhgamma.resonance",
   "name": "Resonance",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "target_game_version": "v1.11.8",
   "authors": "pjhgamma",
   "description": "Warps and mends tracked friends through resonance.",

@@ -18,7 +18,7 @@ public class Plugin : AddonPlugin
 
     public const string Name = "Friendship Editor";
 
-    public const string Version = "0.2.1";
+    public const string Version = "0.3.0";
 
     public override string AddonDescription => "Sets rules for players' reputation and creatures' like and relationships toward friends.";
 

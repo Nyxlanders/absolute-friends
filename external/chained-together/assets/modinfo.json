@@ -1,7 +1,7 @@
 {
   "id": "pjhgamma.chainedtogether",
   "name": "Chained Together",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "target_game_version": "v1.11.8",
   "authors": "pjhgamma",
   "description": "Chains tracked friends together.",

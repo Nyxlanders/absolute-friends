@@ -16,7 +16,7 @@ public class Plugin : AddonPlugin
 
     public const string Name = "Resonance";
 
-    public const string Version = "0.2.1";
+    public const string Version = "0.3.0";
 
     public override string AddonDescription => "Warps and mends tracked friends through resonance.";
 

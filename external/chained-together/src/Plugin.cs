@@ -16,7 +16,7 @@ public class Plugin : AddonPlugin
 
     public const string Name = "Chained Together";
 
-    public const string Version = "0.1.0";
+    public const string Version = "0.3.0";
 
     public override string AddonDescription => "Chains tracked friends together.";
 

@@ -1,7 +1,7 @@
 {
   "id": "pjhgamma.absolutefriends",
   "name": "Absolute Friends",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "target_game_version": "v1.11.8",
   "authors": "pjhgamma",
   "description": "Make players and creatures true friends.\nPrevent friendly fire, share creature friendships, and travel with tracked friends.",

@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <ImportDirectoryBuildTargets>false</ImportDirectoryBuildTargets>
+    <AssemblyName>AbsoluteFriends.ChainedTogether</AssemblyName>
+    <RootNamespace>AbsoluteFriends.ChainedTogether</RootNamespace>
+    <LibraryPath>$(MSBuildThisFileDirectory)..\lib\</LibraryPath>
+    <AssetsPath>$(MSBuildThisFileDirectory)..\assets\</AssetsPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp" HintPath="$(LibraryPath)PUBLIC-Assembly-CSharp.dll" Private="false" />
+    <Reference Include="HOOKS-Assembly-CSharp" HintPath="$(LibraryPath)HOOKS-Assembly-CSharp.dll" Private="false" />
+    <Reference Include="BepInEx" HintPath="$(LibraryPath)BepInEx.dll" Private="false" />
+    <Reference Include="Mono.Cecil" HintPath="$(LibraryPath)Mono.Cecil.dll" Private="false" />
+    <Reference Include="MonoMod.Utils" HintPath="$(LibraryPath)MonoMod.Utils.dll" Private="false" />
+    <Reference Include="AbsoluteFriends" HintPath="$(LibraryPath)AbsoluteFriends.dll" Private="false" />
+    <Reference Include="AbsoluteFriends.Core" HintPath="$(LibraryPath)AbsoluteFriends.Core.dll" Private="false" />
+    <Reference Include="UnityEngine" HintPath="$(LibraryPath)UnityEngine.dll" Private="false" />
+    <Reference Include="UnityEngine.CoreModule" HintPath="$(LibraryPath)UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="UnityEngine.InputLegacyModule" HintPath="$(LibraryPath)UnityEngine.InputLegacyModule.dll" Private="false" />
+  </ItemGroup>
+
+  <Target Name="StageArtifacts" AfterTargets="Build">
+    <ItemGroup>
+      <AssetFiles Include="$(AssetsPath)**\*" />
+    </ItemGroup>
+
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ArtifactsPath)plugins" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(AssetFiles)" DestinationFiles="$(ArtifactsPath)%(RecursiveDir)%(Filename)%(Extension)" SkipUnchangedFiles="true" />
+  </Target>
+
+</Project>

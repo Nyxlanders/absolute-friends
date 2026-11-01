@@ -1,0 +1,18 @@
+0pjhgamma.absolutefriends.chainedtogether-name|체인드 투게더
+pjhgamma.absolutefriends.chainedtogether-description|추적되는 친구끼리 체인으로 묶습니다.
+
+Chained Together|체인드 투게더
+Chains tracked friends together.|추적되는 친구끼리 체인으로 묶습니다.
+
+Chain Length|체인 길이
+Sets the length of each chain between a player and a friend.|플레이어와 친구 사이를 잇는 각 체인의 길이를 설정합니다.
+Chain Elasticity|체인 탄성
+Sets how far the chain stretches and how softly it pulls. A value of 0 keeps it rigid, and 1 lets it stretch to twice its length.|체인이 얼마나 늘어나고 얼마나 부드럽게 당기는지 설정합니다. 0이면 늘어나지 않고, 1이면 길이의 두 배까지 늘어납니다.
+Chain Style|체인 모양
+Chooses how the chains look and sound.|체인의 모양과 소리를 고릅니다.
+Void|공허
+Rubicon|루비콘
+Weaver|엮는 자
+Ripple|잔물결
+Chain Sound Volume|체인 소리 크기
+Sets the volume of the chains' sounds.|체인 소리의 크기를 설정합니다.

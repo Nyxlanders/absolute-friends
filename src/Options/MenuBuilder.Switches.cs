@@ -28,7 +28,7 @@ public abstract partial class MenuBuilder
         OpLabel label = new(
             new Vector2(_pos.x + Spacing + Gap, _pos.y - Spacing * 0.5f),
             new(ElementWidth * span - Spacing - Gap, Spacing),
-            WithMeadowMark(Translate(text), meadowNote != null),
+            WithMeadowMark(Translate(text), meadowNote is DisabledInMeadowNote or PartlyDisabledInMeadowNote),
             FLabelAlignment.Left
         )
         {

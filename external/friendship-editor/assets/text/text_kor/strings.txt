@@ -1,14 +1,15 @@
 0pjhgamma.friendshipeditor-name|친구 관계 편집기
 pjhgamma.friendshipeditor-description|절대적 친구 관리자에 친구 관계 탭을 추가해 평판, 생물 호감도, 생물 관계의 규칙을 정합니다.
 
+Friendship Editor|친구 관계 편집기
 Sets rules for players' reputation and creatures' like and relationships toward friends.|플레이어의 평판과 친구를 향한 생물의 호감도와 관계에 규칙을 정합니다.
+
 Reputation|평판
 Sets reputation rules for players.|플레이어의 평판 규칙을 정합니다.
 Like|호감도
 Sets like rules toward tracked friends.|추적되는 친구를 향한 호감도 규칙을 정합니다.
 Relationship|관계
 Sets relationship rules toward tracked friends.|추적되는 친구를 향한 관계 규칙을 정합니다.
-Friendship Editor|친구 관계 편집기
 Adds the Friendship tab to the friend manager.|친구 관리자에 친구 관계 탭을 추가합니다.
 
 Friendship|친구 관계

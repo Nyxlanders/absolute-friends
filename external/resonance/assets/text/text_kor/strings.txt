@@ -1,6 +1,7 @@
 0pjhgamma.resonance-name|공명
 pjhgamma.resonance-description|공명을 통해 추적되는 친구들을 순간이동시키고 치유합니다.
 
+Resonance|공명
 Warps and mends tracked friends through resonance.|공명을 통해 추적되는 친구들을 순간이동시키고 치유합니다.
 
 Resonance Anchor|공명 기준점
@@ -28,7 +29,6 @@ Shows the room melting into the void during a gate resonance.|게이트 공명 �
 Resonance Shockwave|공명 충격파
 Shows shockwaves bursting around everyone who resonated.|공명한 모두의 주위로 충격파가 퍼지는 효과를 보여 줍니다.
 
-Resonance|공명
 Resonance warps and mends tracked friends.|공명으로 추적되는 친구를 순간이동시키고 회복시킵니다.
 Backlash|반동
 Resonance demands a cost and leaves an aftershock.|공명에 대가가 따르고 후유증이 남습니다.

@@ -14,7 +14,7 @@ public class Plugin : BaseUnityPlugin
 {
     public const string GUID = "pjhgamma.absolutefriends";
 
-    public const string Name = "Absolute Friends";
+    public const string Name = "Absolute Friends: Refriended";
 
     public const string Version = "0.3.0";
 

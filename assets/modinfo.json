@@ -1,10 +1,10 @@
 {
   "id": "pjhgamma.absolutefriends",
-  "name": "Absolute Friends",
+  "name": "Absolute Friends: Refriended",
   "version": "0.3.0",
   "target_game_version": "v1.11.8",
-  "authors": "pjhgamma",
-  "description": "Make players and creatures true friends.\nPrevent friendly fire, share creature friendships, and travel with tracked friends.",
+  "authors": "pjhgamma (original), Nyxlanders (Refriended edition)",
+  "description": "Refriended edition of Absolute Friends by pjhgamma, packaged by Nyxlanders with a new cover.\nPrevent friendly fire, share creature friendships, and travel with tracked friends.\nBased on Absolute Friends 0.3.0. Enable only one edition at a time.",
   "tags": [
     "Game Mechanics",
     "Dependency",

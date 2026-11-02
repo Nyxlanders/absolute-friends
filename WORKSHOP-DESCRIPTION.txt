@@ -1,0 +1,28 @@
+Absolute Friends: Refriended
+
+A community edition of Absolute Friends by pjhgamma, packaged by Nyxlanders
+with a new cover. Based on version 0.3.0; gameplay is unchanged in this edition.
+
+Absolute Friends provides configurable friendship rules, friendly-fire
+protection, friendship sharing between players, and tools for managing and
+travelling with creature companions.
+
+Includes all ten built-in modules: Core, Manager, Meadow, Visualizer, General,
+Items, Players, Creatures, Iterators, and Pilgrimage.
+Resonance, Friendship Editor, and Chained Together are separate addons and are
+not bundled here.
+
+Compatibility
+This edition retains the original mod and plugin IDs for compatibility with
+existing settings and addons. Enable only one edition of Absolute Friends.
+The package targets Rain World v1.11.8.
+
+Credits
+Original code and mod: pjhgamma
+Refriended packaging and display name: Nyxlanders
+Cover: adapted from the original Absolute Friends artwork.
+MIT license and original copyright notice are included.
+
+Source
+Original: https://github.com/pjhgamma/absolute-friends
+Fork: https://github.com/Nyxlanders/absolute-friends

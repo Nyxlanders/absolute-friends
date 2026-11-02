@@ -1,0 +1,15 @@
+Absolute Friends: Refriended
+
+Original software: Absolute Friends by pjhgamma
+Copyright (c) pjhgamma
+Original source: https://github.com/pjhgamma/absolute-friends
+Base revision: 4d2f7af (version 0.3.0)
+
+Refriended packaging and display name: Nyxlanders
+Fork: https://github.com/Nyxlanders/absolute-friends
+The original gameplay code and internal plugin IDs are retained.
+
+Cover: adapted from the original Absolute Friends artwork.
+
+The original MIT license is included in LICENSE. This edition is a community
+fork and is not represented as an official release by pjhgamma.

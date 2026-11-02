@@ -14,7 +14,7 @@ public class Plugin : AddonPlugin
 {
     public const string GUID = "pjhgamma.chainedtogether";
 
-    public const string Name = "Chained Together";
+    public const string Name = "Absolute Friends: Chained Together";
 
     public const string Version = "0.3.0";
 

@@ -14,7 +14,7 @@ public class Plugin : AddonPlugin
 {
     public const string GUID = "pjhgamma.resonance";
 
-    public const string Name = "Resonance";
+    public const string Name = "Absolute Friends: Resonance";
 
     public const string Version = "0.3.0";
 

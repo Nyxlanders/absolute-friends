@@ -16,7 +16,7 @@ public class Plugin : AddonPlugin
 {
     public const string GUID = "pjhgamma.friendshipeditor";
 
-    public const string Name = "Friendship Editor";
+    public const string Name = "Absolute Friends: Friendship Editor";
 
     public const string Version = "0.3.0";
 
